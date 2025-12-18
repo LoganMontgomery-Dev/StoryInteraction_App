@@ -1,11 +1,12 @@
 # DOAMMO Narrative Engine
 
-An AI-powered interactive storytelling system for the DOAMMO universe, featuring multi-agent orchestration, semantic lore retrieval, and local LLM inference.
+An AI-powered interactive storytelling system for the DOAMMO universe, featuring intelligent lore retrieval, conversation memory, and context-aware narrative generation.
 
 ## Project Status
 
-**Current Phase:** Foundation Setup
-**Last Milestone:** Environment Setup (Milestone 0) ✓
+**Current Phase:** Core Engine Complete (6/9 milestones)
+**Last Milestone:** Conversation History + Context Management ✓
+**Next:** LangGraph Multi-Agent System
 
 ## Quick Start
 
