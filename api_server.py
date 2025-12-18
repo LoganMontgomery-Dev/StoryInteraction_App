@@ -13,6 +13,10 @@ from datetime import datetime
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from fastapi import Request
 from pydantic import BaseModel
 
 import chromadb
@@ -206,6 +210,9 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Set up templates for HTML frontend
+templates = Jinja2Templates(directory="templates")
+
 # Add CORS middleware to allow web frontend connections
 app.add_middleware(
     CORSMiddleware,
@@ -283,8 +290,13 @@ async def startup_event():
 # API Endpoints
 # ============================================================================
 
-@app.get("/", response_model=dict)
-async def root():
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    """Serve the web frontend"""
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/api", response_model=dict)
+async def api_root():
     """API root - basic info"""
     return {
         "name": "DOAMMO Narrative Engine API",
