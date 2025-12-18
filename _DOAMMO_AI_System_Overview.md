@@ -1,6 +1,9 @@
 [[_DOAMMO_Development_Milestones]]
 # DOAMMO Interactive Narrative AI System - Implementation Guide
 
+Note: there mnay be a SillyTavern folder somewhere in the project, if so, that is simply for reference. dont alter anything in the SillyTavern, think ofit as "read only".
+ 
+
 ## Project Overview
 
 An intelligent, locally-operated narrative assistant serving as both AI Dungeon Master and creative writing tool for the DOAMMO universe. The system orchestrates multiple specialized AI agents to maintain strict lore consistency while generating dynamic, engaging narratives through semantic search and multi-agent verification.
