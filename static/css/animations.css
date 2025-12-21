@@ -1,0 +1,84 @@
+/* ============================================================================
+   DOAMMO UI - Animations & Transitions
+   ============================================================================ */
+
+/* Standard transition */
+.transition-std {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Message fade in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message {
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* Modal fade in */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.settings-modal {
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+/* Tooltip appear */
+.tooltip {
+  opacity: 0;
+  transition: opacity 0.15s ease-in;
+}
+
+.tooltip.show {
+  opacity: 1;
+}
+
+/* Hover glow */
+.btn-primary:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 20px rgba(78, 168, 122, 0.4);
+}
+
+/* Panel slide */
+.director-panel {
+  transition: width 0.3s ease-in-out;
+}
+
+/* Loading indicator */
+.loading::after {
+  content: '...';
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+/* Rotate icon */
+.rotate-180 {
+  transform: rotate(180deg);
+  transition: transform 0.2s ease;
+}
+
+/* Smooth scroll */
+.smooth-scroll {
+  scroll-behavior: smooth;
+}

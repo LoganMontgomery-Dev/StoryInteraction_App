@@ -1,0 +1,70 @@
+/* ============================================================================
+   DOAMMO UI - Theme Variables
+   ============================================================================ */
+
+/* DOAMMO Theme (default) */
+:root,
+:root[data-theme="doammo"] {
+  /* Backgrounds */
+  --bg-primary: #0E292E;
+  --bg-secondary: #11171d;
+  --bg-panel: rgba(21, 79, 72, 0.6);
+  --bg-card: rgba(11, 40, 93, 0.5);
+
+  /* Accents */
+  --accent-primary: #4EA87A;
+  --accent-secondary: #6966AA;
+  --accent-warning: #DAE052;
+  --accent-interactive: #464F9C;
+
+  /* Text */
+  --text-primary: #B3BDCF;
+  --text-secondary: rgba(158, 150, 179, 0.7);
+  --text-disabled: rgba(158, 150, 179, 0.4);
+
+  /* Borders */
+  --border-subtle: rgba(21, 79, 72, 0.3);
+  --border-visible: rgba(78, 168, 122, 0.5);
+
+  /* Shadows */
+  --shadow-sm: 0 4px 12px rgba(14, 41, 46, 0.3);
+  --shadow-md: 0 8px 24px rgba(14, 41, 46, 0.4);
+  --shadow-lg: 0 20px 60px rgba(14, 41, 46, 0.6);
+
+  /* Gradients */
+  --gradient-user: linear-gradient(135deg, #464F9C, #6966AA);
+  --gradient-ai: linear-gradient(135deg, rgba(21, 79, 72, 0.8), rgba(78, 168, 122, 0.4));
+}
+
+/* Basic Dark Theme */
+:root[data-theme="dark"] {
+  /* Backgrounds */
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #0d0d0d;
+  --bg-panel: rgba(45, 45, 45, 0.8);
+  --bg-card: rgba(35, 35, 35, 0.8);
+
+  /* Accents */
+  --accent-primary: #4a9eff;
+  --accent-secondary: #9d4edd;
+  --accent-warning: #ffd60a;
+  --accent-interactive: #4cc9f0;
+
+  /* Text */
+  --text-primary: #e0e0e0;
+  --text-secondary: rgba(180, 180, 180, 0.7);
+  --text-disabled: rgba(120, 120, 120, 0.5);
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-visible: rgba(74, 158, 255, 0.5);
+
+  /* Shadows */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.7);
+
+  /* Gradients */
+  --gradient-user: linear-gradient(135deg, #4a9eff, #9d4edd);
+  --gradient-ai: linear-gradient(135deg, rgba(45, 45, 45, 0.9), rgba(60, 60, 60, 0.6));
+}

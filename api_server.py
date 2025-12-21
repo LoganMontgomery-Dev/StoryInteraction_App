@@ -393,6 +393,9 @@ async def list_sessions():
 
     return session_ids
 
+# Mount static files (must be last to not interfere with API routes)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

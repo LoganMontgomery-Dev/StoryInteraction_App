@@ -1,0 +1,43 @@
+/* ============================================================================
+   DOAMMO UI - Glassmorphism Effects
+   ============================================================================ */
+
+.glass-panel {
+  background: var(--bg-panel);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+}
+
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.glass-input {
+  background: var(--bg-panel);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(78, 168, 122, 0.3);
+  border-radius: 12px;
+}
+
+.glass-input:focus-within {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 20px rgba(78, 168, 122, 0.2);
+}
+
+.glass-modal {
+  background: rgba(21, 79, 72, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(78, 168, 122, 0.3);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+}

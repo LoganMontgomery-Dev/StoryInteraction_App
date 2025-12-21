@@ -4,340 +4,304 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DOAMMO Narrative Engine</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/themes.css">
+    <link rel="stylesheet" href="/static/css/glassmorphism.css">
+    <link rel="stylesheet" href="/static/css/animations.css">
+    <link rel="stylesheet" href="/static/css/main.css">
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1em;
-        }
-
-        .chat-container {
-            height: 500px;
-            overflow-y: auto;
-            padding: 20px;
-            background: #f8f9fa;
-        }
-
-        .message {
-            margin-bottom: 20px;
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .message.user {
-            text-align: right;
-        }
-
-        .message-content {
-            display: inline-block;
-            max-width: 80%;
-            padding: 15px 20px;
-            border-radius: 12px;
-            text-align: left;
-        }
-
-        .user .message-content {
-            background: #667eea;
-            color: white;
-        }
-
-        .ai .message-content {
-            background: white;
-            border: 2px solid #e0e0e0;
-            color: #333;
-        }
-
-        .lore-tags {
-            margin-top: 10px;
-            font-size: 0.85em;
-            opacity: 0.7;
-        }
-
-        .lore-tag {
-            display: inline-block;
-            background: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-right: 5px;
-            margin-top: 5px;
-        }
-
-        .input-container {
-            padding: 20px;
-            background: white;
-            border-top: 2px solid #e0e0e0;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        #userInput {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-            font-family: inherit;
-        }
-
-        #userInput:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        #sendBtn {
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            cursor: pointer;
-            font-weight: 600;
-            transition: transform 0.2s;
-        }
-
-        #sendBtn:hover {
-            transform: scale(1.05);
-        }
-
-        #sendBtn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #667eea;
-        }
-
-        .loading::after {
-            content: '...';
-            animation: dots 1.5s steps(4, end) infinite;
-        }
-
-        @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60%, 100% { content: '...'; }
-        }
-
-        .session-info {
-            padding: 10px 20px;
-            background: #f8f9fa;
-            border-top: 1px solid #e0e0e0;
-            font-size: 0.9em;
-            color: #666;
-            text-align: center;
-        }
-
-        .new-session-btn {
-            background: none;
-            border: none;
-            color: #667eea;
-            cursor: pointer;
-            text-decoration: underline;
-            font-size: 0.9em;
-            margin-left: 10px;
-        }
-    </style>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>DOAMMO Narrative Engine</h1>
-            <p>AI-powered interactive storytelling for your universe</p>
-        </div>
+    <!-- Header Image -->
+    <div class="header-image-container">
+        <img src="/static/header-landscape.png" alt="DOAMMO Universe" class="header-image">
+    </div>
 
-        <div class="chat-container" id="chatContainer">
-            <div class="message ai">
-                <div class="message-content">
-                    Welcome to the DOAMMO Narrative Engine! I'm your AI narrator, powered by your universe's lore.
-                    Type a scenario or action, and I'll generate an immersive narrative response using your world's knowledge base.
-                    <br><br>
-                    Try something like: "I explore the ancient ruins" or "Lyssia and I discover something strange"
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-logo">DOAMMO</div>
+        <div class="top-bar-icons">
+            <i data-lucide="bell" class="top-bar-icon"></i>
+            <i data-lucide="user" class="top-bar-icon"></i>
+            <i data-lucide="settings" class="top-bar-icon" id="settingsIcon"></i>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Story Panel (Left) -->
+        <div class="story-panel">
+            <div class="panel-container glass-panel">
+                <div class="chat-container" id="chatContainer">
+                    <!-- Welcome message -->
+                    <div class="message ai">
+                        <div class="message-content">
+                            Welcome to the DOAMMO Narrative Engine! I'm your AI narrator, powered by your universe's lore.
+                            Type a scenario or action, and I'll generate an immersive narrative response using your world's knowledge base.
+                            <br><br>
+                            Try something like: "I explore the ancient ruins" or "Lyssia and I discover something strange"
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Container -->
+                <div class="input-container glass-input">
+                    <input
+                        type="text"
+                        id="userInput"
+                        placeholder="Type your scenario or action..."
+                        onkeypress="if(event.key === 'Enter') sendMessage()"
+                    >
+                    <button id="sendBtn" onclick="sendMessage()">
+                        <i data-lucide="send" style="width: 16px; height: 16px;"></i>
+                        Send
+                    </button>
                 </div>
             </div>
         </div>
 
-        <div class="session-info">
-            Session: <span id="sessionId">Starting new session...</span>
-            <button class="new-session-btn" onclick="startNewSession()">Start New Session</button>
-        </div>
+        <!-- Drag Handle -->
+        <div class="drag-handle" id="dragHandle"></div>
 
-        <div class="input-container">
-            <div class="input-group">
-                <input
-                    type="text"
-                    id="userInput"
-                    placeholder="Type your scenario or action..."
-                    onkeypress="if(event.key === 'Enter') sendMessage()"
-                >
-                <button id="sendBtn" onclick="sendMessage()">Send</button>
+        <!-- Director Panel (Right) -->
+        <div class="director-panel" id="directorPanel">
+            <button class="collapse-btn" id="collapseBtn">
+                <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
+            </button>
+
+            <div class="director-content">
+                <div class="panel-container glass-panel">
+                    <!-- Tab Navigation -->
+                    <div class="tab-navigation">
+                    <button class="tab-btn active" data-tab="story-wiki">Story Wiki</button>
+                    <button class="tab-btn" data-tab="state">State</button>
+                    <button class="tab-btn" data-tab="controls">Controls</button>
+                </div>
+
+                <!-- Story Wiki Tab -->
+                <div class="tab-content active" id="story-wiki">
+                    <div class="content-card grayed">
+                        <div class="card-header locked">
+                            <i data-lucide="book-open" style="width: 18px; height: 18px;"></i>
+                            Story Wiki
+                            <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
+                        </div>
+                        <div class="card-body">
+                            No Story Wiki pages yet
+                            <br><br>
+                            <strong>Story Wiki will track:</strong>
+                            <ul style="margin-left: 20px; margin-top: 8px;">
+                                <li>Character changes specific to your story</li>
+                                <li>Divergences from canon lore</li>
+                                <li>Session-specific locations and items</li>
+                            </ul>
+                            <br>
+                            <em>Coming in Phase 2</em>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- State Tab -->
+                <div class="tab-content" id="state">
+                    <div class="content-card grayed">
+                        <div class="card-header locked">
+                            <i data-lucide="bar-chart" style="width: 18px; height: 18px;"></i>
+                            Character States
+                            <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
+                        </div>
+                        <div class="card-body">
+                            <em>Coming in Phase 2</em>
+                        </div>
+                    </div>
+
+                    <div class="content-card grayed">
+                        <div class="card-header locked">
+                            <i data-lucide="link" style="width: 18px; height: 18px;"></i>
+                            Relationships
+                            <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
+                        </div>
+                        <div class="card-body">
+                            <em>Coming in Phase 2</em>
+                        </div>
+                    </div>
+
+                    <div class="content-card grayed">
+                        <div class="card-header locked">
+                            <i data-lucide="target" style="width: 18px; height: 18px;"></i>
+                            Quest Flags
+                            <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
+                        </div>
+                        <div class="card-body">
+                            <em>Coming in Phase 2</em>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls Tab -->
+                <div class="tab-content" id="controls">
+                    <div class="content-card grayed">
+                        <div class="card-header locked">
+                            <i data-lucide="rotate-ccw" style="width: 18px; height: 18px;"></i>
+                            Undo Last Turn
+                            <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
+                        </div>
+                        <div class="card-body">
+                            <em>Coming in Phase 2</em>
+                        </div>
+                    </div>
+
+                    <div class="content-card grayed">
+                        <div class="card-header locked">
+                            <i data-lucide="edit" style="width: 18px; height: 18px;"></i>
+                            Edit Messages
+                            <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
+                        </div>
+                        <div class="card-body">
+                            <em>Coming in Phase 2</em>
+                        </div>
+                    </div>
+
+                    <div class="content-card grayed">
+                        <div class="card-header locked">
+                            <i data-lucide="download" style="width: 18px; height: 18px;"></i>
+                            Export Story
+                            <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
+                        </div>
+                        <div class="card-body">
+                            <em>Coming in Phase 2</em>
+                        </div>
+                    </div>
+                </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
-        let sessionId = null;
-        const API_URL = 'http://localhost:8000';
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="settings-modal">
+            <div class="modal-header">
+                <div class="modal-title">Settings</div>
+                <i data-lucide="x" class="modal-close" id="closeModal"></i>
+            </div>
 
-        function addMessage(content, isUser, loreUsed = []) {
-            const chatContainer = document.getElementById('chatContainer');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
-
-            let messageHTML = `<div class="message-content">${content}`;
-
-            if (loreUsed && loreUsed.length > 0) {
-                messageHTML += `<div class="lore-tags">`;
-                messageHTML += `Lore used: `;
-                loreUsed.forEach(lore => {
-                    messageHTML += `<span class="lore-tag">${lore}</span>`;
-                });
-                messageHTML += `</div>`;
-            }
-
-            messageHTML += `</div>`;
-            messageDiv.innerHTML = messageHTML;
-
-            chatContainer.appendChild(messageDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function showLoading() {
-            const chatContainer = document.getElementById('chatContainer');
-            const loadingDiv = document.createElement('div');
-            loadingDiv.id = 'loadingIndicator';
-            loadingDiv.className = 'loading';
-            loadingDiv.textContent = 'Generating narrative';
-            chatContainer.appendChild(loadingDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function hideLoading() {
-            const loading = document.getElementById('loadingIndicator');
-            if (loading) {
-                loading.remove();
-            }
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('userInput');
-            const sendBtn = document.getElementById('sendBtn');
-            const message = input.value.trim();
-
-            if (!message) return;
-
-            // Disable input
-            input.disabled = true;
-            sendBtn.disabled = true;
-
-            // Add user message
-            addMessage(message, true);
-            input.value = '';
-
-            // Show loading
-            showLoading();
-
-            try {
-                const response = await fetch(`${API_URL}/narrative`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        user_input: message,
-                        session_id: sessionId
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                // Update session ID if this is the first message
-                if (!sessionId) {
-                    sessionId = data.session_id;
-                    document.getElementById('sessionId').textContent = sessionId;
-                }
-
-                // Hide loading and add AI response
-                hideLoading();
-                addMessage(data.narrative, false, data.lore_used);
-
-            } catch (error) {
-                hideLoading();
-                addMessage(`Error: ${error.message}. Make sure the API server is running at ${API_URL}`, false);
-            } finally {
-                // Re-enable input
-                input.disabled = false;
-                sendBtn.disabled = false;
-                input.focus();
-            }
-        }
-
-        function startNewSession() {
-            if (confirm('Start a new session? Current conversation will be saved.')) {
-                sessionId = null;
-                document.getElementById('sessionId').textContent = 'Starting new session...';
-                document.getElementById('chatContainer').innerHTML = `
-                    <div class="message ai">
-                        <div class="message-content">
-                            New session started! What adventure shall we begin?
+            <!-- Agents Section -->
+            <div class="accordion-section expanded">
+                <div class="accordion-header" data-accordion="agents">
+                    Agents
+                    <i data-lucide="chevron-down" class="accordion-chevron"></i>
+                </div>
+                <div class="accordion-content">
+                    <div class="checkbox-item">
+                        <div class="checkbox active">
+                            <i data-lucide="check"></i>
+                        </div>
+                        <div class="checkbox-label">
+                            <div class="checkbox-title">Lore Keeper Agent</div>
+                            <div class="checkbox-desc">Active - retrieves lore from vault</div>
                         </div>
                     </div>
-                `;
-            }
-        }
 
-        // Focus input on load
-        window.onload = () => {
-            document.getElementById('userInput').focus();
-        };
+                    <div class="checkbox-item">
+                        <div class="checkbox active">
+                            <i data-lucide="check"></i>
+                        </div>
+                        <div class="checkbox-label">
+                            <div class="checkbox-title">Narrator Agent</div>
+                            <div class="checkbox-desc">Active - generates story narratives</div>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-item">
+                        <div class="checkbox active">
+                            <i data-lucide="check"></i>
+                        </div>
+                        <div class="checkbox-label">
+                            <div class="checkbox-title">Quality Agent</div>
+                            <div class="checkbox-desc">Active - checks narrative consistency</div>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-item disabled">
+                        <div class="checkbox disabled">
+                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--text-disabled);"></i>
+                        </div>
+                        <div class="checkbox-label">
+                            <div class="checkbox-title">Continuity Agent</div>
+                            <div class="checkbox-desc">🔒 Coming in Phase 2 - Tracks unresolved plot threads</div>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-item disabled">
+                        <div class="checkbox disabled">
+                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--text-disabled);"></i>
+                        </div>
+                        <div class="checkbox-label">
+                            <div class="checkbox-title">Drama/Pacing Agent</div>
+                            <div class="checkbox-desc">🔒 Coming in Phase 2 - Balances tension and calm</div>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-item disabled">
+                        <div class="checkbox disabled">
+                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--text-disabled);"></i>
+                        </div>
+                        <div class="checkbox-label">
+                            <div class="checkbox-title">State Updater Agent</div>
+                            <div class="checkbox-desc">🔒 Coming in Phase 2 - Extracts state changes from narratives</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Display Section -->
+            <div class="accordion-section expanded">
+                <div class="accordion-header" data-accordion="display">
+                    Display
+                    <i data-lucide="chevron-down" class="accordion-chevron"></i>
+                </div>
+                <div class="accordion-content">
+                    <div class="setting-item">
+                        <div class="setting-label">Theme</div>
+                        <div class="theme-switcher">
+                            <button class="theme-btn active" data-theme="doammo">DOAMMO</button>
+                            <button class="theme-btn" data-theme="dark">Dark</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Section (locked) -->
+            <div class="accordion-section">
+                <div class="accordion-header locked" data-accordion="advanced">
+                    Advanced
+                    <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
+                </div>
+            </div>
+
+            <!-- Writer Mode Section (locked) -->
+            <div class="accordion-section">
+                <div class="accordion-header locked" data-accordion="writer">
+                    Writer Mode
+                    <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/js/theme.js"></script>
+    <script src="/static/js/panels.js"></script>
+    <script src="/static/js/settings.js"></script>
+    <script src="/static/js/chat.js"></script>
+    <script src="/static/js/app.js"></script>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
     </script>
 </body>
 </html>
