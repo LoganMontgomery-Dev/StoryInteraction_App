@@ -98,25 +98,16 @@ Interactive docs at http://localhost:8000/docs
 ## Next Phase: Phase 2
 
 Planned enhancements:
-- LM Studio integration (local LLM option)
-- Switchable backend (Claude vs LM Studio)
 - Advanced multi-agent features
 - UI enhancements (settings panel, themes)
 - World state tracking
 - Additional specialized agents
-
+- LM Studio integration (local LLM option)
+- Switchable backend (Claude vs LM Studio)
+- 
 ## Reference Material
 
 - **SillyTavern**: Cloned locally for UI/UX reference (frontend patterns only)
-- **Obsidian Vault**: `C:/Users/Logan/Desktop/DOAMMO/__Doammo_Vault`
-
-## Development Philosophy
-
-- Start simple, build incrementally
-- Test after every change
-- Complete one milestone before moving to next
-- Local-first, cloud-optional architecture
-- Hobby project with commercial migration path
 
 ## License
 
