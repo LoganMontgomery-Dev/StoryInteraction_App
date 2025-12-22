@@ -76,9 +76,6 @@ DOAMMO_APP/
 ├── api_server.py                      # FastAPI REST backend
 ├── interactive_multiagent.py          # Interactive multi-agent terminal interface
 ├── test_*.py                          # Test scripts for each milestone
-├── _DOAMMO_AI_System_Overview.md     # Technical specification (gitignored)
-├── _DOAMMO_Development_Milestones.md # Milestone tracking (gitignored)
-├── _DOAMMO_Development_Journal.md    # Development journal (gitignored)
 └── README.md                          # This file
 ```
 
