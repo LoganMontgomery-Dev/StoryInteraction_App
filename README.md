@@ -4,7 +4,7 @@ An AI-powered interactive storytelling system for the DOAMMO universe, featuring
 
 ## Project Status
 
-**Current Phase:** Phase 1 Complete! ALL 9 MILESTONES DONE ✓
+**Current Phase:** Phase 1 Complete. ALL 9 milestones done ✓
 **System Status:** Fully operational web application
 **Next Phase:** Phase 2 - LM Studio integration and advanced features
 
@@ -13,7 +13,6 @@ An AI-powered interactive storytelling system for the DOAMMO universe, featuring
 ### Prerequisites
 - Python 3.10+
 - Anthropic API key (Claude)
-- Obsidian vault with DOAMMO lore at `C:/Users/Logan/Desktop/DOAMMO/__Doammo_Vault`
 
 ### Running the Application
 ```bash
@@ -29,7 +28,7 @@ uvicorn api_server:app --reload
 
 ## What's Built
 
-### Phase 1: Complete! ✓
+### Phase 1: Complete ✓
 
 - [x] **Milestone 0**: Environment Setup
 - [x] **Milestone 1**: Claude API Connection
@@ -82,9 +81,10 @@ DOAMMO_APP/
 ## Usage
 
 ### Web Interface (Recommended)
+1. you have to connect the app to a folder of documents, which would be character bios, storylines, locations, and otherworld building information for the ai to draw on.)
 1. Start the server: `uvicorn api_server:app --reload`
 2. Open http://localhost:8000
-3. Type scenarios and get AI-generated narratives!
+3. Type scenarios and get AI-generated narratives
 
 ### Interactive Terminal
 ```bash
