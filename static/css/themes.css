@@ -5,66 +5,122 @@
 /* DOAMMO Theme (default) */
 :root,
 :root[data-theme="doammo"] {
-  /* Backgrounds */
-  --bg-primary: #0E292E;
-  --bg-secondary: #11171d;
-  --bg-panel: rgba(21, 79, 72, 0.6);
-  --bg-card: rgba(11, 40, 93, 0.5);
 
-  /* Accents */
-  --accent-primary: #4EA87A;
-  --accent-secondary: #6966AA;
-  --accent-warning: #DAE052;
-  --accent-interactive: #464F9C;
+  /* Base Backgrounds */
+  --main-background: #0E292E;           /* body background */
+  --topbar-background: #11171d;         /* top bar with logo and icons */
+  --panel-container-background: #15494880;  /* .panel-container glass effect (60% opacity) */
+  --tab-navigation-background: #0b263f;     /* .tab-navigation and .content-card backgrounds */
+
+  /* Interactive Elements */
+  --send-button-background: #4EA87A;    /* #sendBtn and active states */
+  --tab-button-active-background: #4EA87A;  /* .tab-btn.active */
+  --user-message-gradient-start: #464F9C;   /* .user .message-content gradient start */
+  --user-message-gradient-end: #6966AA;     /* .user .message-content gradient end */
+  --theme-button-inactive-background: #464F9C80;  /* .theme-btn not active (50% opacity) */
+
+  /* Borders & Outlines */
+  --panel-border: #15494880;            /* .glass-panel borders (30% opacity - calculated as 4D hex) */
+  --input-border: #4EA87A80;            /* .input-container border (30% opacity - calculated as 4D hex) */
+  --input-focus-border: #4EA87A;        /* .input-container:focus-within */
+  --ai-message-border: #4EA87A33;       /* .ai .message-content border (20% opacity) */
+  --modal-border: #4EA87A80;            /* settings modal border (30% opacity) */
+  --disabled-checkbox-border: #9E96B366;    /* .checkbox.disabled border (40% opacity) */
 
   /* Text */
-  --text-primary: #B3BDCF;
-  --text-secondary: rgba(158, 150, 179, 0.7);
-  --text-disabled: rgba(158, 150, 179, 0.4);
+  --main-text: #B3BDCF;                 /* primary text throughout UI */
+  --secondary-text: #9E96B3B3;          /* labels, descriptions (70% opacity) */
+  --disabled-text: #9E96B366;           /* disabled items (40% opacity) */
+  --send-button-text: #0E292E;          /* text on #sendBtn */
 
-  /* Borders */
-  --border-subtle: rgba(21, 79, 72, 0.3);
-  --border-visible: rgba(78, 168, 122, 0.5);
+  /* Accents & Highlights */
+  --primary-accent: #4EA87A;            /* interactive hover states, icons */
+  --scrollbar-active: #6d9c83;          /* .chat-container scrollbar when actively dragging */
+  --lore-tag-background: #4EA87A33;     /* .lore-tag background (20% opacity) */
+  --lore-tag-text: #4EA87A;             /* .lore-tag text */
+  --drag-handle-hover: #4EA87A80;       /* .drag-handle:hover background (30% opacity) */
 
-  /* Shadows */
-  --shadow-sm: 0 4px 12px rgba(14, 41, 46, 0.3);
-  --shadow-md: 0 8px 24px rgba(14, 41, 46, 0.4);
-  --shadow-lg: 0 20px 60px rgba(14, 41, 46, 0.6);
+  /* Shadows & Glows */
+  --user-message-shadow: #464F9C80;     /* .user .message-content box-shadow (30% opacity - calculated as 4D hex) */
+  --ai-message-shadow: #0E292ECC;       /* .ai .message-content box-shadow (80% opacity) */
+  --send-button-glow: #4EA87A66;        /* #sendBtn:hover glow (40% opacity) */
+  --drag-handle-glow: #4EA87A80;        /* .drag-handle:hover::before glow (50% opacity) */
+  --input-focus-glow: #4EA87A33;        /* .input-container:focus-within glow (20% opacity) */
+  --panel-shadow: #0E292E66;            /* .glass-panel shadow (40% opacity) */
+  --card-shadow: #0E292E80;             /* .glass-card shadow (30% opacity - calculated as 4D hex) */
+  --modal-shadow: #0E292E99;            /* .glass-modal shadow (60% opacity) */
+  --modal-scrollbar-track: #0E292E80;   /* settings modal scrollbar track (30% opacity - calculated as 4D hex) */
 
-  /* Gradients */
-  --gradient-user: linear-gradient(135deg, #464F9C, #6966AA);
-  --gradient-ai: linear-gradient(135deg, rgba(21, 79, 72, 0.8), rgba(78, 168, 122, 0.4));
+  /* Overlays */
+  --header-gradient-overlay-end: #0E292E99;  /* .header-image-overlay gradient end (60% opacity) */
+  --modal-overlay-background: #0E292ECC;     /* .modal-overlay background (80% opacity) */
+  --settings-modal-background: #154F48F2;    /* .settings-modal background (95% opacity) */
+
+  /* Disabled States */
+  --disabled-checkbox-background: #9E96B333;  /* .checkbox.disabled background (20% opacity) */
+
+  /* Warnings & Alerts */
+  --warning-accent: #DAE052;            /* future use for warnings */
+  --interactive-accent: #464F9C;        /* secondary interactive elements */
 }
 
 /* Basic Dark Theme */
 :root[data-theme="dark"] {
-  /* Backgrounds */
-  --bg-primary: #1a1a1a;
-  --bg-secondary: #0d0d0d;
-  --bg-panel: rgba(45, 45, 45, 0.8);
-  --bg-card: rgba(35, 35, 35, 0.8);
 
-  /* Accents */
-  --accent-primary: #4a9eff;
-  --accent-secondary: #9d4edd;
-  --accent-warning: #ffd60a;
-  --accent-interactive: #4cc9f0;
+  /* Base Backgrounds */
+  --main-background: #1a1a1a;
+  --topbar-background: #0d0d0d;
+  --panel-container-background: #2d2d2dCC;
+  --tab-navigation-background: #232323;
+
+  /* Interactive Elements */
+  --send-button-background: #4a9eff;
+  --tab-button-active-background: #4a9eff;
+  --user-message-gradient-start: #4a9eff;
+  --user-message-gradient-end: #9d4edd;
+  --theme-button-inactive-background: #4a9eff80;
+
+  /* Borders & Outlines */
+  --panel-border: #ffffff1a;
+  --input-border: #4a9eff80;
+  --input-focus-border: #4a9eff;
+  --ai-message-border: #4a9eff33;
+  --modal-border: #4a9eff80;
+  --disabled-checkbox-border: #78787880;
 
   /* Text */
-  --text-primary: #e0e0e0;
-  --text-secondary: rgba(180, 180, 180, 0.7);
-  --text-disabled: rgba(120, 120, 120, 0.5);
+  --main-text: #e0e0e0;
+  --secondary-text: #b4b4b4b3;
+  --disabled-text: #78787880;
+  --send-button-text: #1a1a1a;
 
-  /* Borders */
-  --border-subtle: rgba(255, 255, 255, 0.1);
-  --border-visible: rgba(74, 158, 255, 0.5);
+  /* Accents & Highlights */
+  --primary-accent: #4a9eff;
+  --scrollbar-active: #6ab3ff;
+  --lore-tag-background: #4a9eff33;
+  --lore-tag-text: #4a9eff;
+  --drag-handle-hover: #4a9eff80;
 
-  /* Shadows */
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.7);
+  /* Shadows & Glows */
+  --user-message-shadow: #4a9eff80;
+  --ai-message-shadow: #000000cc;
+  --send-button-glow: #4a9eff66;
+  --drag-handle-glow: #4a9eff80;
+  --input-focus-glow: #4a9eff33;
+  --panel-shadow: #00000066;
+  --card-shadow: #00000080;
+  --modal-shadow: #000000b3;
+  --modal-scrollbar-track: #00000080;
 
-  /* Gradients */
-  --gradient-user: linear-gradient(135deg, #4a9eff, #9d4edd);
-  --gradient-ai: linear-gradient(135deg, rgba(45, 45, 45, 0.9), rgba(60, 60, 60, 0.6));
+  /* Overlays */
+  --header-gradient-overlay-end: #1a1a1a99;
+  --modal-overlay-background: #000000b3;
+  --settings-modal-background: #2d2d2df2;
+
+  /* Disabled States */
+  --disabled-checkbox-background: #78787833;
+
+  /* Warnings & Alerts */
+  --warning-accent: #ffd60a;
+  --interactive-accent: #4cc9f0;
 }

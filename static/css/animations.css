@@ -52,7 +52,7 @@
 /* Hover glow */
 .btn-primary:hover {
   filter: brightness(1.1);
-  box-shadow: 0 0 20px rgba(78, 168, 122, 0.4);
+  box-shadow: 0 0 20px var(--send-button-glow);
 }
 
 /* Panel slide */

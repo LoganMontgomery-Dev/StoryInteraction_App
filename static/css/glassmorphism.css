@@ -3,41 +3,41 @@
    ============================================================================ */
 
 .glass-panel {
-  background: var(--bg-panel);
+  background: var(--panel-container-background);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--panel-border);
   border-radius: 16px;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 8px 24px var(--panel-shadow);
 }
 
 .glass-card {
-  background: var(--bg-card);
+  background: var(--tab-navigation-background);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--panel-border);
   border-radius: 12px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 12px var(--card-shadow);
 }
 
 .glass-input {
-  background: var(--bg-panel);
+  background: var(--panel-container-background);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(78, 168, 122, 0.3);
+  border: 1px solid var(--input-border);
   border-radius: 12px;
 }
 
 .glass-input:focus-within {
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 20px rgba(78, 168, 122, 0.2);
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 20px var(--input-focus-glow);
 }
 
 .glass-modal {
-  background: rgba(21, 79, 72, 0.95);
+  background: var(--settings-modal-background);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(78, 168, 122, 0.3);
+  border: 1px solid var(--modal-border);
   border-radius: 16px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 20px 60px var(--modal-shadow);
 }
