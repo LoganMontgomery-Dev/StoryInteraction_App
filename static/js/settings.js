@@ -3,20 +3,28 @@
    ============================================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
-    const settingsIcon = document.getElementById('settingsIcon');
     const settingsModal = document.getElementById('settingsModal');
     const closeModal = document.getElementById('closeModal');
 
-    // Open modal
-    settingsIcon.addEventListener('click', () => {
-        settingsModal.classList.add('active');
-        lucide.createIcons(); // Reinitialize icons in modal
-    });
+    // Wait for Lucide to initialize icons, then attach event listeners
+    setTimeout(() => {
+        const settingsIcon = document.getElementById('settingsIcon');
 
-    // Close modal
-    closeModal.addEventListener('click', () => {
-        settingsModal.classList.remove('active');
-    });
+        if (settingsIcon) {
+            // Open modal
+            settingsIcon.addEventListener('click', () => {
+                settingsModal.classList.add('active');
+                lucide.createIcons(); // Reinitialize icons in modal
+            });
+        }
+
+        // Close modal
+        if (closeModal) {
+            closeModal.addEventListener('click', () => {
+                settingsModal.classList.remove('active');
+            });
+        }
+    }, 100);
 
     // Close on overlay click
     settingsModal.addEventListener('click', (e) => {

@@ -36,13 +36,18 @@
         <div class="story-panel">
             <div class="panel-container glass-panel">
                 <div class="chat-container" id="chatContainer">
-                    <!-- Welcome message -->
-                    <div class="message ai">
+                    <!--
+                        Welcome message - Static UI element only, never sent to AI or stored in session.
+                        The .welcome-message class excludes it from all conversation operations.
+                    -->
+                    <div class="message welcome-message">
                         <div class="message-content">
-                            Welcome to the DOAMMO Narrative Engine! I'm your AI narrator, powered by your universe's lore.
-                            Type a scenario or action, and I'll generate an immersive narrative response using your world's knowledge base.
-                            <br><br>
-                            Try something like: "I explore the ancient ruins" or "Lyssia and I discover something strange"
+                            <div class="message-text">
+                                Welcome to the DOAMMO Narrative Engine! I'm your AI narrator, powered by your universe's lore.
+                                Type a scenario or action, and I'll generate an immersive narrative response using your world's knowledge base.
+                                <br><br>
+                                Try something like: "I explore the ancient ruins" or "Lyssia and I discover something strange"
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -59,6 +64,14 @@
                         <i data-lucide="send" style="width: 16px; height: 16px;"></i>
                         Send
                     </button>
+                    <div class="input-actions">
+                        <button class="input-action-btn disabled" id="undoBtn" title="Undo Last Turn">
+                            <i data-lucide="rotate-ccw" style="width: 18px; height: 18px;"></i>
+                        </button>
+                        <button class="input-action-btn disabled" id="exportBtn" title="Export Story">
+                            <i data-lucide="download" style="width: 18px; height: 18px;"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -78,7 +91,6 @@
                     <div class="tab-navigation">
                     <button class="tab-btn active" data-tab="story-wiki">Story Wiki</button>
                     <button class="tab-btn" data-tab="state">State</button>
-                    <button class="tab-btn" data-tab="controls">Controls</button>
                 </div>
 
                 <!-- Story Wiki Tab -->
@@ -140,41 +152,6 @@
                     </div>
                 </div>
 
-                <!-- Controls Tab -->
-                <div class="tab-content" id="controls">
-                    <div class="content-card grayed">
-                        <div class="card-header locked">
-                            <i data-lucide="rotate-ccw" style="width: 18px; height: 18px;"></i>
-                            Undo Last Turn
-                            <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
-                        </div>
-                        <div class="card-body">
-                            <em>Coming in Phase 2</em>
-                        </div>
-                    </div>
-
-                    <div class="content-card grayed">
-                        <div class="card-header locked">
-                            <i data-lucide="edit" style="width: 18px; height: 18px;"></i>
-                            Edit Messages
-                            <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
-                        </div>
-                        <div class="card-body">
-                            <em>Coming in Phase 2</em>
-                        </div>
-                    </div>
-
-                    <div class="content-card grayed">
-                        <div class="card-header locked">
-                            <i data-lucide="download" style="width: 18px; height: 18px;"></i>
-                            Export Story
-                            <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
-                        </div>
-                        <div class="card-body">
-                            <em>Coming in Phase 2</em>
-                        </div>
-                    </div>
-                </div>
                 </div>
             </div>
         </div>
@@ -188,13 +165,173 @@
                 <i data-lucide="x" class="modal-close" id="closeModal"></i>
             </div>
 
-            <!-- Agents Section -->
+            <!-- BASIC SETTINGS (Default Expanded) -->
             <div class="accordion-section expanded">
-                <div class="accordion-header" data-accordion="agents">
-                    Agents
+                <div class="accordion-header" data-accordion="basic">
+                    Basic Settings
                     <i data-lucide="chevron-down" class="accordion-chevron"></i>
                 </div>
                 <div class="accordion-content">
+
+                    <!-- Theme -->
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <i data-lucide="palette" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                            Theme
+                        </div>
+                        <div class="theme-switcher">
+                            <button class="theme-btn active" data-theme="doammo">DOAMMO</button>
+                            <button class="theme-btn" data-theme="dark">Dark</button>
+                        </div>
+                    </div>
+
+                    <!-- Font Size (mockup) -->
+                    <div class="setting-item disabled">
+                        <div class="setting-label">
+                            <i data-lucide="type" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                            Font Size
+                            <i data-lucide="lock" style="width: 12px; height: 12px; margin-left: auto;"></i>
+                        </div>
+                        <div class="slider-container" style="opacity: 0.4; pointer-events: none;">
+                            <span class="slider-label">Small</span>
+                            <input type="range" min="12" max="20" value="14" class="slider">
+                            <span class="slider-label">Large</span>
+                        </div>
+                        <div class="checkbox-desc">🔒 Coming in Phase 2</div>
+                    </div>
+
+                    <!-- Panel Layout (mockup) -->
+                    <div class="setting-item disabled">
+                        <div class="setting-label">
+                            <i data-lucide="layout" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                            Default Panel Layout
+                            <i data-lucide="lock" style="width: 12px; height: 12px; margin-left: auto;"></i>
+                        </div>
+                        <div class="radio-group" style="opacity: 0.4; pointer-events: none;">
+                            <label class="radio-item">
+                                <input type="radio" name="layout" value="dual" checked>
+                                <span>Dual Panel (Chat + Director)</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="layout" value="chat-only">
+                                <span>Chat Only (Fullscreen)</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="layout" value="triple">
+                                <span>Triple Panel (+ Settings Sidebar)</span>
+                            </label>
+                        </div>
+                        <div class="checkbox-desc">🔒 Coming in Phase 2</div>
+                    </div>
+
+                    <!-- Auto-scroll (mockup) -->
+                    <div class="checkbox-item disabled">
+                        <div class="checkbox disabled">
+                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--disabled-text);"></i>
+                        </div>
+                        <div class="checkbox-label">
+                            <div class="checkbox-title">Auto-scroll to new messages</div>
+                            <div class="checkbox-desc">🔒 Coming in Phase 2 - Automatically scroll chat when new AI responses arrive</div>
+                        </div>
+                    </div>
+
+                    <!-- Sound Effects (mockup) -->
+                    <div class="checkbox-item disabled">
+                        <div class="checkbox disabled">
+                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--disabled-text);"></i>
+                        </div>
+                        <div class="checkbox-label">
+                            <div class="checkbox-title">Sound Effects</div>
+                            <div class="checkbox-desc">🔒 Coming in Phase 2 - Play sounds for message send/receive</div>
+                        </div>
+                    </div>
+
+                    <!-- Compact Mode (mockup) -->
+                    <div class="checkbox-item disabled">
+                        <div class="checkbox disabled">
+                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--disabled-text);"></i>
+                        </div>
+                        <div class="checkbox-label">
+                            <div class="checkbox-title">Compact Message Mode</div>
+                            <div class="checkbox-desc">🔒 Coming in Phase 2 - Reduce spacing between messages</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ADVANCED SETTINGS (Default Collapsed) -->
+            <div class="accordion-section">
+                <div class="accordion-header" data-accordion="advanced">
+                    Advanced Settings
+                    <i data-lucide="chevron-down" class="accordion-chevron"></i>
+                </div>
+                <div class="accordion-content">
+
+                    <!-- API Provider (mockup) -->
+                    <div class="setting-item disabled">
+                        <div class="setting-label">
+                            <i data-lucide="cloud" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                            AI Provider
+                            <i data-lucide="lock" style="width: 12px; height: 12px; margin-left: auto;"></i>
+                        </div>
+                        <div class="radio-group" style="opacity: 0.4; pointer-events: none;">
+                            <label class="radio-item">
+                                <input type="radio" name="provider" value="claude" checked>
+                                <span>Claude API (Anthropic)</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="provider" value="lmstudio">
+                                <span>LM Studio (Local)</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="provider" value="openai">
+                                <span>OpenAI</span>
+                            </label>
+                        </div>
+                        <div class="checkbox-desc">🔒 Coming in Phase 2 - Switch between different AI backends</div>
+                    </div>
+
+                    <!-- API Key Management (mockup) -->
+                    <div class="setting-item disabled">
+                        <div class="setting-label">
+                            <i data-lucide="key" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                            API Keys
+                            <i data-lucide="lock" style="width: 12px; height: 12px; margin-left: auto;"></i>
+                        </div>
+                        <div style="opacity: 0.4; pointer-events: none;">
+                            <input type="password" placeholder="Claude API Key" class="text-input" value="sk-ant-...">
+                            <input type="password" placeholder="OpenAI API Key" class="text-input" style="margin-top: 8px;">
+                            <button class="btn-secondary" style="margin-top: 8px;">Save Keys</button>
+                        </div>
+                        <div class="checkbox-desc">🔒 Coming in Phase 2 - Manage API keys for different providers</div>
+                    </div>
+
+                    <!-- Model Selection (mockup) -->
+                    <div class="setting-item disabled">
+                        <div class="setting-label">
+                            <i data-lucide="cpu" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                            Model
+                            <i data-lucide="lock" style="width: 12px; height: 12px; margin-left: auto;"></i>
+                        </div>
+                        <select class="select-input" style="opacity: 0.4; pointer-events: none;">
+                            <option>claude-sonnet-4-20250514 (Current)</option>
+                            <option>claude-opus-4</option>
+                            <option>claude-sonnet-3.5</option>
+                            <option>gpt-4-turbo</option>
+                            <option>local-llama-3-70b</option>
+                        </select>
+                        <div class="checkbox-desc">🔒 Coming in Phase 2 - Choose which AI model to use</div>
+                    </div>
+
+                    <!-- Agent Configuration -->
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <i data-lucide="users" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                            Active Agents
+                        </div>
+                    </div>
+
                     <div class="checkbox-item">
                         <div class="checkbox active">
                             <i data-lucide="check"></i>
@@ -227,7 +364,7 @@
 
                     <div class="checkbox-item disabled">
                         <div class="checkbox disabled">
-                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--text-disabled);"></i>
+                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--disabled-text);"></i>
                         </div>
                         <div class="checkbox-label">
                             <div class="checkbox-title">Continuity Agent</div>
@@ -237,7 +374,7 @@
 
                     <div class="checkbox-item disabled">
                         <div class="checkbox disabled">
-                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--text-disabled);"></i>
+                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--disabled-text);"></i>
                         </div>
                         <div class="checkbox-label">
                             <div class="checkbox-title">Drama/Pacing Agent</div>
@@ -247,48 +384,90 @@
 
                     <div class="checkbox-item disabled">
                         <div class="checkbox disabled">
-                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--text-disabled);"></i>
+                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--disabled-text);"></i>
                         </div>
                         <div class="checkbox-label">
                             <div class="checkbox-title">State Updater Agent</div>
                             <div class="checkbox-desc">🔒 Coming in Phase 2 - Extracts state changes from narratives</div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Display Section -->
-            <div class="accordion-section expanded">
-                <div class="accordion-header" data-accordion="display">
-                    Display
-                    <i data-lucide="chevron-down" class="accordion-chevron"></i>
-                </div>
-                <div class="accordion-content">
-                    <div class="setting-item">
-                        <div class="setting-label">Theme</div>
-                        <div class="theme-switcher">
-                            <button class="theme-btn active" data-theme="doammo">DOAMMO</button>
-                            <button class="theme-btn" data-theme="dark">Dark</button>
+                    <!-- Performance Settings (mockup) -->
+                    <div class="setting-item disabled">
+                        <div class="setting-label">
+                            <i data-lucide="zap" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                            Performance
+                            <i data-lucide="lock" style="width: 12px; height: 12px; margin-left: auto;"></i>
                         </div>
                     </div>
+
+                    <div class="checkbox-item disabled">
+                        <div class="checkbox disabled">
+                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--disabled-text);"></i>
+                        </div>
+                        <div class="checkbox-label">
+                            <div class="checkbox-title">Aggressive Caching</div>
+                            <div class="checkbox-desc">🔒 Coming in Phase 2 - Cache more lore lookups to reduce API calls</div>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-item disabled">
+                        <div class="checkbox disabled">
+                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--disabled-text);"></i>
+                        </div>
+                        <div class="checkbox-label">
+                            <div class="checkbox-title">Parallel Agent Processing</div>
+                            <div class="checkbox-desc">🔒 Coming in Phase 2 - Run compatible agents simultaneously for faster responses</div>
+                        </div>
+                    </div>
+
+                    <!-- Max Context Length (mockup) -->
+                    <div class="setting-item disabled">
+                        <div class="setting-label">
+                            <i data-lucide="scroll-text" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                            Max Context Messages
+                            <i data-lucide="lock" style="width: 12px; height: 12px; margin-left: auto;"></i>
+                        </div>
+                        <div class="slider-container" style="opacity: 0.4; pointer-events: none;">
+                            <span class="slider-label">5</span>
+                            <input type="range" min="5" max="50" value="10" class="slider">
+                            <span class="slider-label">50</span>
+                            <span class="slider-value">10</span>
+                        </div>
+                        <div class="checkbox-desc">🔒 Coming in Phase 2 - How many recent messages to include in AI context</div>
+                    </div>
+
+                    <!-- Vault Path (mockup) -->
+                    <div class="setting-item disabled">
+                        <div class="setting-label">
+                            <i data-lucide="folder" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                            Vault Path
+                            <i data-lucide="lock" style="width: 12px; height: 12px; margin-left: auto;"></i>
+                        </div>
+                        <div style="opacity: 0.4; pointer-events: none; display: flex; gap: 8px;">
+                            <input type="text" class="text-input" value="C:/Users/Logan/Desktop/DOAMMO/__Doammo_Vault" style="flex: 1;">
+                            <button class="btn-secondary">Browse</button>
+                        </div>
+                        <div class="checkbox-desc">🔒 Coming in Phase 2 - Change Obsidian vault location</div>
+                    </div>
+
+                    <!-- Database Reset (mockup) -->
+                    <div class="setting-item disabled">
+                        <div class="setting-label">
+                            <i data-lucide="database" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                            ChromaDB Management
+                            <i data-lucide="lock" style="width: 12px; height: 12px; margin-left: auto;"></i>
+                        </div>
+                        <div style="opacity: 0.4; pointer-events: none;">
+                            <button class="btn-secondary">Rebuild Embeddings</button>
+                            <span style="margin-left: 8px; color: var(--secondary-text); font-size: 0.9em;">Last updated: Today</span>
+                        </div>
+                        <div class="checkbox-desc">🔒 Coming in Phase 2 - Re-index vault when lore files change</div>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Advanced Section (locked) -->
-            <div class="accordion-section">
-                <div class="accordion-header locked" data-accordion="advanced">
-                    Advanced
-                    <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
-                </div>
-            </div>
-
-            <!-- Writer Mode Section (locked) -->
-            <div class="accordion-section">
-                <div class="accordion-header locked" data-accordion="writer">
-                    Writer Mode
-                    <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -296,6 +475,7 @@
     <script src="/static/js/theme.js"></script>
     <script src="/static/js/panels.js"></script>
     <script src="/static/js/settings.js"></script>
+    <script src="/static/js/controls.js"></script>
     <script src="/static/js/chat.js"></script>
     <script src="/static/js/app.js"></script>
 

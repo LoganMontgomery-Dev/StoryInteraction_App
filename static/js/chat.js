@@ -10,7 +10,9 @@ function addMessage(content, isUser, loreUsed = []) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
 
-    let messageHTML = `<div class="message-content">${escapeHtml(content)}`;
+    let messageHTML = `
+        <div class="message-content">
+            <div class="message-text">${escapeHtml(content)}</div>`;
 
     // Add lore tags if present
     if (loreUsed && loreUsed.length > 0) {
@@ -21,11 +23,28 @@ function addMessage(content, isUser, loreUsed = []) {
         messageHTML += `</div>`;
     }
 
-    messageHTML += `</div>`;
+    // Add edit button (enabled)
+    messageHTML += `
+            <div class="message-actions">
+                <button class="message-action-btn" title="Edit Message">
+                    <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i>
+                    Edit
+                </button>
+            </div>
+        </div>`;
+
     messageDiv.innerHTML = messageHTML;
 
     chatContainer.appendChild(messageDiv);
     chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    // Track message count for controls
+    if (typeof messageCount !== 'undefined') {
+        messageCount++;
+        if (typeof updateControlStates === 'function') {
+            updateControlStates();
+        }
+    }
 
     // Reinitialize icons for new content
     if (typeof lucide !== 'undefined') {

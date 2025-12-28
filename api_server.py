@@ -13,7 +13,7 @@ from datetime import datetime
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi import Request
@@ -392,6 +392,88 @@ async def list_sessions():
     session_ids = [f.stem.replace("api_", "") for f in session_files]
 
     return session_ids
+
+@app.post("/session/{session_id}/undo")
+async def undo_last_turn(session_id: str):
+    """Remove the last user message and AI response from session"""
+    if session_id not in conv_managers:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    conv_manager = conv_managers[session_id]
+
+    if len(conv_manager.conversation_history) < 2:
+        return {"success": False, "message": "Not enough messages to undo"}
+
+    # Remove last 2 messages (AI response, then user message)
+    conv_manager.conversation_history = conv_manager.conversation_history[:-2]
+    conv_manager.save_session()
+
+    return {
+        "success": True,
+        "message_count": len(conv_manager.conversation_history),
+        "message": "Last turn removed successfully"
+    }
+
+@app.post("/session/{session_id}/edit")
+async def edit_message(session_id: str, edit_data: dict):
+    """Edit a message in the conversation history"""
+    if session_id not in conv_managers:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    conv_manager = conv_managers[session_id]
+    message_index = edit_data.get("message_index")
+    new_content = edit_data.get("new_content")
+
+    if message_index is None or new_content is None:
+        raise HTTPException(status_code=400, detail="Missing message_index or new_content")
+
+    if message_index >= len(conv_manager.conversation_history) or message_index < 0:
+        raise HTTPException(status_code=400, detail="Invalid message index")
+
+    # Update the message content
+    conv_manager.conversation_history[message_index]["content"] = new_content
+    conv_manager.conversation_history[message_index]["edited"] = datetime.now().isoformat()
+    conv_manager.save_session()
+
+    return {
+        "success": True,
+        "message": "Message edited successfully"
+    }
+
+@app.get("/session/{session_id}/export")
+async def export_session(session_id: str):
+    """Export conversation as text file"""
+    if session_id not in conv_managers:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    conv_manager = conv_managers[session_id]
+
+    if not conv_manager.conversation_history:
+        raise HTTPException(status_code=400, detail="No messages to export")
+
+    # Format conversation as readable text
+    text = f"DOAMMO Story Export\n"
+    text += f"Session ID: {session_id}\n"
+
+    # Get timestamps
+    metadata = conv_manager.get_metadata()
+    text += f"Created: {metadata['created']}\n"
+    text += f"Updated: {metadata['updated']}\n"
+    text += f"Total Messages: {metadata['message_count']}\n"
+    text += f"\n{'='*60}\n\n"
+
+    for msg in conv_manager.conversation_history:
+        role = "You" if msg['role'] == 'user' else "AI Narrator"
+        text += f"{role}:\n{msg['content']}\n\n"
+        text += f"{'-'*60}\n\n"
+
+    return Response(
+        content=text,
+        media_type="text/plain",
+        headers={
+            "Content-Disposition": f"attachment; filename=DOAMMO_Story_{session_id}.txt"
+        }
+    )
 
 # Mount static files (must be last to not interfere with API routes)
 app.mount("/static", StaticFiles(directory="static"), name="static")
