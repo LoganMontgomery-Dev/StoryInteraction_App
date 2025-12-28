@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DOAMMO Narrative Engine</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>📖</text></svg>">
+
     <!-- CSS -->
     <link rel="stylesheet" href="/static/css/themes.css">
     <link rel="stylesheet" href="/static/css/glassmorphism.css">
@@ -23,10 +26,24 @@
     <!-- Top Bar -->
     <div class="top-bar">
         <div class="top-bar-logo">DOAMMO</div>
+        <div class="top-bar-center">
+            <span id="wikiStatus" class="wiki-status">
+                <i data-lucide="folder-x" style="width: 14px; height: 14px;"></i>
+                Unsaved Chat
+            </span>
+        </div>
         <div class="top-bar-icons">
-            <i data-lucide="bell" class="top-bar-icon"></i>
-            <i data-lucide="user" class="top-bar-icon"></i>
-            <i data-lucide="settings" class="top-bar-icon" id="settingsIcon"></i>
+            <button class="top-bar-btn" id="openWikiBtn" title="Open Wiki">
+                <i data-lucide="folder-open" style="width: 16px; height: 16px;"></i>
+                Open Wiki
+            </button>
+            <button class="top-bar-btn primary" id="saveWikiBtn" title="Save to Wiki">
+                <i data-lucide="save" style="width: 16px; height: 16px;"></i>
+                Save to Wiki
+            </button>
+            <i data-lucide="bell" class="top-bar-icon" id="notificationsIcon" title="Notifications"></i>
+            <i data-lucide="user" class="top-bar-icon" id="profileIcon" title="Profile"></i>
+            <i data-lucide="settings" class="top-bar-icon" id="settingsIcon" title="Settings"></i>
         </div>
     </div>
 
@@ -95,23 +112,62 @@
 
                 <!-- Story Wiki Tab -->
                 <div class="tab-content active" id="story-wiki">
-                    <div class="content-card grayed">
-                        <div class="card-header locked">
+                    <div class="content-card">
+                        <div class="card-header">
                             <i data-lucide="book-open" style="width: 18px; height: 18px;"></i>
-                            Story Wiki
-                            <i data-lucide="lock" style="width: 14px; height: 14px; margin-left: auto;"></i>
+                            Lore Used This Session
                         </div>
                         <div class="card-body">
-                            No Story Wiki pages yet
-                            <br><br>
-                            <strong>Story Wiki will track:</strong>
-                            <ul style="margin-left: 20px; margin-top: 8px;">
-                                <li>Character changes specific to your story</li>
-                                <li>Divergences from canon lore</li>
-                                <li>Session-specific locations and items</li>
-                            </ul>
-                            <br>
-                            <em>Coming in Phase 2</em>
+                            <div id="loreList">
+                                <!-- Mockup data - will be populated dynamically -->
+                                <div class="lore-item" onclick="viewLoreFile('Lyssia.md')">
+                                    <div class="lore-item-header">
+                                        <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
+                                        <span class="lore-filename">Lyssia.md</span>
+                                        <span class="lore-count">3 times</span>
+                                    </div>
+                                </div>
+
+                                <div class="lore-item" onclick="viewLoreFile('Ancient_Ruins.md')">
+                                    <div class="lore-item-header">
+                                        <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
+                                        <span class="lore-filename">Ancient_Ruins.md</span>
+                                        <span class="lore-count">2 times</span>
+                                    </div>
+                                </div>
+
+                                <div class="lore-item" onclick="viewLoreFile('The_Dust.md')">
+                                    <div class="lore-item-header">
+                                        <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
+                                        <span class="lore-filename">The_Dust.md</span>
+                                        <span class="lore-count">1 time</span>
+                                    </div>
+                                </div>
+
+                                <!-- Empty state (will be shown when no lore used yet) -->
+                                <div id="loreEmptyState" style="display: none; text-align: center; color: var(--secondary-text); padding: 40px 20px;">
+                                    <i data-lucide="inbox" style="width: 48px; height: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
+                                    <div>No lore files used yet</div>
+                                    <div style="font-size: 0.9em; margin-top: 8px;">Start a conversation to see which lore gets referenced</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lore Detail View (initially hidden) -->
+                    <div class="content-card" id="loreDetailCard" style="display: none; margin-top: 16px;">
+                        <div class="card-header">
+                            <i data-lucide="book" style="width: 18px; height: 18px;"></i>
+                            <span id="loreDetailTitle">Lyssia.md</span>
+                            <button class="close-detail-btn" onclick="closeLoreDetail()">
+                                <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+                            </button>
+                        </div>
+                        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                            <div id="loreDetailContent" style="white-space: pre-wrap; font-size: 0.9em; line-height: 1.6;">
+                                <!-- Lore file content will be loaded here -->
+                                Loading...
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -222,6 +278,17 @@
                             </label>
                         </div>
                         <div class="checkbox-desc">🔒 Coming in Phase 2</div>
+                    </div>
+
+                    <!-- Auto Wiki Updates (mockup) -->
+                    <div class="checkbox-item disabled">
+                        <div class="checkbox disabled">
+                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--disabled-text);"></i>
+                        </div>
+                        <div class="checkbox-label">
+                            <div class="checkbox-title">Automatic Wiki Updates</div>
+                            <div class="checkbox-desc">🔒 Coming in Phase 2 - AI automatically extracts and saves information to wiki pages after each response</div>
+                        </div>
                     </div>
 
                     <!-- Auto-scroll (mockup) -->
@@ -471,17 +538,269 @@
         </div>
     </div>
 
+    <!-- Wiki Browser Modal -->
+    <div class="modal-overlay" id="wikiBrowserModal">
+        <div class="settings-modal">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i data-lucide="folder-open" style="width: 20px; height: 20px; margin-right: 8px;"></i>
+                    Open Wiki
+                </div>
+                <i data-lucide="x" class="modal-close" id="closeWikiBrowserModal"></i>
+            </div>
+
+            <div class="modal-body">
+                <!-- Browse for Wiki Button -->
+                <div style="margin-bottom: 20px;">
+                    <button class="btn-primary" onclick="browseForWiki()" style="width: 100%;">
+                        <i data-lucide="folder-search" style="width: 16px; height: 16px;"></i>
+                        Browse for Wiki...
+                    </button>
+                </div>
+
+                <div style="text-align: center; color: var(--secondary-text); margin-bottom: 16px; font-size: 0.9em;">
+                    or select from recent wikis:
+                </div>
+
+                <div class="wiki-list">
+                    <!-- Mockup wiki items -->
+                    <div class="wiki-item" onclick="openWiki('desert_adventure')">
+                        <div class="wiki-item-icon">
+                            <i data-lucide="book" style="width: 24px; height: 24px;"></i>
+                        </div>
+                        <div class="wiki-item-info">
+                            <div class="wiki-item-name">Desert Adventure</div>
+                            <div class="wiki-item-meta">Last updated: 2 days ago • 23 messages</div>
+                        </div>
+                        <div class="wiki-item-actions">
+                            <i data-lucide="chevron-right" style="width: 18px; height: 18px; color: var(--secondary-text);"></i>
+                        </div>
+                    </div>
+
+                    <div class="wiki-item" onclick="openWiki('lyssia_journey')">
+                        <div class="wiki-item-icon">
+                            <i data-lucide="book" style="width: 24px; height: 24px;"></i>
+                        </div>
+                        <div class="wiki-item-info">
+                            <div class="wiki-item-name">Lyssia's Journey</div>
+                            <div class="wiki-item-meta">Last updated: 1 week ago • 47 messages</div>
+                        </div>
+                        <div class="wiki-item-actions">
+                            <i data-lucide="chevron-right" style="width: 18px; height: 18px; color: var(--secondary-text);"></i>
+                        </div>
+                    </div>
+
+                    <div class="wiki-item" onclick="openWiki('ruins_exploration')">
+                        <div class="wiki-item-icon">
+                            <i data-lucide="book" style="width: 24px; height: 24px;"></i>
+                        </div>
+                        <div class="wiki-item-info">
+                            <div class="wiki-item-name">Ruins Exploration</div>
+                            <div class="wiki-item-meta">Last updated: 3 weeks ago • 12 messages</div>
+                        </div>
+                        <div class="wiki-item-actions">
+                            <i data-lucide="chevron-right" style="width: 18px; height: 18px; color: var(--secondary-text);"></i>
+                        </div>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div id="wikiEmptyState" style="display: none; text-align: center; padding: 60px 20px; color: var(--secondary-text);">
+                        <i data-lucide="folder-x" style="width: 64px; height: 64px; opacity: 0.3; margin-bottom: 16px;"></i>
+                        <div style="font-size: 1.1em; margin-bottom: 8px;">No wikis found</div>
+                        <div style="font-size: 0.9em;">Create your first wiki by saving a conversation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Wiki Modal -->
+    <div class="modal-overlay" id="saveWikiModal">
+        <div class="settings-modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i data-lucide="save" style="width: 20px; height: 20px; margin-right: 8px;"></i>
+                    Save to Wiki
+                </div>
+                <i data-lucide="x" class="modal-close" id="closeSaveWikiModal"></i>
+            </div>
+
+            <div class="modal-body">
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i data-lucide="file-text" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                        Wiki Name
+                    </div>
+                    <input type="text" id="wikiNameInput" class="text-input" placeholder="Enter wiki name..." style="width: 100%; margin-top: 8px;">
+                    <div style="font-size: 0.85em; color: var(--secondary-text); margin-top: 4px;">
+                        This will create a new wiki or update an existing one
+                    </div>
+                </div>
+
+                <div class="setting-item" style="margin-top: 24px;">
+                    <div class="setting-label">
+                        <i data-lucide="folder" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                        Wiki Location
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <input type="text" id="wikiPathInput" class="text-input" value="./wikis/" readonly style="flex: 1;">
+                        <button class="btn-secondary" onclick="browseWikiLocation()">
+                            <i data-lucide="folder-open" style="width: 14px; height: 14px;"></i>
+                            Browse
+                        </button>
+                    </div>
+                    <div style="font-size: 0.85em; color: var(--secondary-text); margin-top: 4px;">
+                        Default: ./wikis/ folder in project directory
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 32px; justify-content: flex-end;">
+                    <button class="btn-secondary" onclick="closeSaveWikiModal()">Cancel</button>
+                    <button class="btn-primary" onclick="saveToWiki()">
+                        <i data-lucide="save" style="width: 14px; height: 14px;"></i>
+                        Save Wiki
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Modal -->
+    <div class="modal-overlay" id="notificationsModal">
+        <div class="settings-modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i data-lucide="bell" style="width: 20px; height: 20px; margin-right: 8px;"></i>
+                    Notifications
+                </div>
+                <i data-lucide="x" class="modal-close" id="closeNotificationsModal"></i>
+            </div>
+
+            <div class="modal-body">
+                <div style="text-align: center; padding: 60px 20px; color: var(--secondary-text);">
+                    <i data-lucide="bell-off" style="width: 64px; height: 64px; opacity: 0.3; margin-bottom: 16px;"></i>
+                    <div style="font-size: 1.1em; margin-bottom: 8px;">No notifications</div>
+                    <div style="font-size: 0.9em;">🔒 Coming in Phase 2</div>
+                    <div style="font-size: 0.85em; margin-top: 16px; opacity: 0.7;">
+                        Future notifications might include:<br>
+                        • Wiki auto-save confirmations<br>
+                        • Long-running AI generation updates<br>
+                        • System messages
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="settings-modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i data-lucide="user" style="width: 20px; height: 20px; margin-right: 8px;"></i>
+                    Profile
+                </div>
+                <i data-lucide="x" class="modal-close" id="closeProfileModal"></i>
+            </div>
+
+            <div class="modal-body">
+                <div class="setting-item">
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+                        <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--primary-accent); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 600; color: #000;">
+                            U
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 1.2em; font-weight: 600; color: var(--main-text); margin-bottom: 4px;">User</div>
+                            <div style="font-size: 0.9em; color: var(--secondary-text);">DOAMMO Explorer</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-item disabled">
+                    <div class="setting-label">
+                        <i data-lucide="user-circle" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                        Display Name
+                        <i data-lucide="lock" style="width: 12px; height: 12px; margin-left: auto;"></i>
+                    </div>
+                    <input type="text" class="text-input" value="User" readonly style="opacity: 0.4; margin-top: 8px;">
+                    <div style="font-size: 0.85em; color: var(--secondary-text); margin-top: 4px;">
+                        🔒 Coming in Phase 2
+                    </div>
+                </div>
+
+                <div class="setting-item disabled" style="margin-top: 20px;">
+                    <div class="setting-label">
+                        <i data-lucide="mail" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                        Email
+                        <i data-lucide="lock" style="width: 12px; height: 12px; margin-left: auto;"></i>
+                    </div>
+                    <input type="email" class="text-input" placeholder="email@example.com" readonly style="opacity: 0.4; margin-top: 8px;">
+                    <div style="font-size: 0.85em; color: var(--secondary-text); margin-top: 4px;">
+                        🔒 Coming in Phase 2 - For account sync and backups
+                    </div>
+                </div>
+
+                <div class="setting-item" style="margin-top: 20px;">
+                    <div class="setting-label">
+                        <i data-lucide="bar-chart-2" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                        Statistics
+                    </div>
+                    <div style="margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div style="padding: 12px; background: var(--panel-container-background); border: 1px solid var(--panel-border); border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.5em; font-weight: 600; color: var(--primary-accent);">0</div>
+                            <div style="font-size: 0.85em; color: var(--secondary-text); margin-top: 4px;">Wikis Created</div>
+                        </div>
+                        <div style="padding: 12px; background: var(--panel-container-background); border: 1px solid var(--panel-border); border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.5em; font-weight: 600; color: var(--primary-accent);">0</div>
+                            <div style="font-size: 0.85em; color: var(--secondary-text); margin-top: 4px;">Total Messages</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.85em; color: var(--secondary-text); margin-top: 12px; opacity: 0.7;">
+                        🔒 More stats coming in Phase 2
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="/static/js/theme.js"></script>
     <script src="/static/js/panels.js"></script>
     <script src="/static/js/settings.js"></script>
     <script src="/static/js/controls.js"></script>
+    <script src="/static/js/wiki.js"></script>
     <script src="/static/js/chat.js"></script>
     <script src="/static/js/app.js"></script>
 
     <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
+        // Initialize Lucide icons with debugging
+        console.log('=== LUCIDE DEBUG ===');
+        console.log('1. Lucide available:', typeof lucide !== 'undefined');
+        console.log('2. Icon elements before:', document.querySelectorAll('[data-lucide]').length);
+
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+            console.log('3. createIcons() called');
+
+            setTimeout(() => {
+                const svgs = document.querySelectorAll('svg');
+                const icons = document.querySelectorAll('[data-lucide]');
+                console.log('4. SVG elements after:', svgs.length);
+                console.log('5. Remaining [data-lucide] elements:', icons.length);
+
+                if (svgs.length > 0) {
+                    const firstSvg = svgs[0];
+                    const computedStyle = window.getComputedStyle(firstSvg);
+                    console.log('6. First SVG element:', firstSvg);
+                    console.log('7. SVG computed width:', computedStyle.width);
+                    console.log('8. SVG computed height:', computedStyle.height);
+                    console.log('9. SVG display:', computedStyle.display);
+                    console.log('10. SVG visibility:', computedStyle.visibility);
+                    console.log('11. SVG opacity:', computedStyle.opacity);
+                    console.log('12. SVG color/stroke:', computedStyle.stroke || computedStyle.color);
+                }
+            }, 100);
+        }
     </script>
 </body>
 </html>

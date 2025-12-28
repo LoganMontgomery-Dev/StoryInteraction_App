@@ -83,13 +83,65 @@ body {
 .top-bar-icon {
   color: var(--secondary-text);
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.2s;
   width: 20px;
   height: 20px;
+  padding: 8px;
+  border-radius: 8px;
 }
 
 .top-bar-icon:hover {
   color: var(--primary-accent);
+  background: var(--tab-navigation-background);
+}
+
+.top-bar-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wiki-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9em;
+  color: var(--secondary-text);
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--tab-navigation-background);
+  border: 1px solid var(--panel-border);
+}
+
+.top-bar-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--panel-border);
+  background: var(--tab-navigation-background);
+  color: var(--main-text);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9em;
+  margin-right: 12px;
+}
+
+.top-bar-btn:hover {
+  border-color: var(--primary-accent);
+  background: var(--panel-container-background);
+}
+
+.top-bar-btn.primary {
+  background: var(--primary-accent);
+  border-color: var(--primary-accent);
+  color: #000;
+}
+
+.top-bar-btn.primary:hover {
+  opacity: 0.9;
 }
 
 /* ============================================================================
@@ -981,6 +1033,192 @@ body {
 .mb-2 { margin-bottom: 16px; }
 
 /* ============================================================================
+   Story Wiki - Lore List
+   ============================================================================ */
+
+.lore-item {
+  background: var(--panel-container-background);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lore-item:hover {
+  border-color: var(--primary-accent);
+  background: var(--tab-navigation-background);
+  transform: translateX(4px);
+}
+
+.lore-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--main-text);
+}
+
+.lore-item-header i {
+  color: var(--primary-accent);
+  flex-shrink: 0;
+}
+
+.lore-filename {
+  flex: 1;
+  font-weight: 500;
+  font-size: 0.95em;
+}
+
+.lore-count {
+  font-size: 0.85em;
+  color: var(--secondary-text);
+  background: var(--tab-navigation-background);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--panel-border);
+}
+
+.close-detail-btn {
+  background: transparent;
+  border: none;
+  color: var(--secondary-text);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-detail-btn:hover {
+  background: var(--panel-container-background);
+  color: var(--primary-accent);
+}
+
+/* ============================================================================
+   Wiki Modals
+   ============================================================================ */
+
+.modal-body {
+  padding: 24px;
+}
+
+.wiki-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wiki-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--panel-container-background);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wiki-item:hover {
+  border-color: var(--primary-accent);
+  background: var(--tab-navigation-background);
+  transform: translateX(4px);
+}
+
+.wiki-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--tab-navigation-background);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  color: var(--primary-accent);
+  flex-shrink: 0;
+}
+
+.wiki-item-info {
+  flex: 1;
+}
+
+.wiki-item-name {
+  font-size: 1.05em;
+  font-weight: 600;
+  color: var(--main-text);
+  margin-bottom: 4px;
+}
+
+.wiki-item-meta {
+  font-size: 0.85em;
+  color: var(--secondary-text);
+}
+
+.wiki-item-actions {
+  display: flex;
+  align-items: center;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background: var(--primary-accent);
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--panel-border);
+  background: var(--tab-navigation-background);
+  color: var(--main-text);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary-accent);
+  background: var(--panel-container-background);
+}
+
+.text-input {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel-container-background);
+  color: var(--main-text);
+  font-family: inherit;
+  font-size: 0.95em;
+  transition: all 0.2s;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: var(--primary-accent);
+  background: var(--tab-navigation-background);
+}
+
+/* ============================================================================
    Responsive
    ============================================================================ */
 
@@ -1001,4 +1239,16 @@ body {
     text-align: center;
     padding: 20px;
   }
+}
+
+/* ============================================================================
+   Icon Fixes - Ensure all SVG icons render at proper size
+   ============================================================================ */
+
+/* Fix for tiny Lucide icons - ensure they inherit size properly */
+svg.lucide {
+  width: inherit !important;
+  height: inherit !important;
+  min-width: 16px;
+  min-height: 16px;
 }

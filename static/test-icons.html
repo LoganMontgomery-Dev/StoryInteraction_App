@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Icon Test</title>
+    <style>
+        body {
+            padding: 40px;
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 8px;
+        }
+        h2 {
+            color: #4ade80;
+        }
+    </style>
+
+    <!-- Lucide Icons from unpkg -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <h1>Lucide Icon Test Page</h1>
+
+    <div class="test-section">
+        <h2>Test 1: Basic Icons</h2>
+        <i data-lucide="settings"></i>
+        <i data-lucide="user"></i>
+        <i data-lucide="bell"></i>
+        <i data-lucide="send"></i>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Styled Icons</h2>
+        <i data-lucide="folder" style="width: 24px; height: 24px; color: #4ade80;"></i>
+        <i data-lucide="save" style="width: 24px; height: 24px; color: #60a5fa;"></i>
+        <i data-lucide="download" style="width: 24px; height: 24px; color: #f472b6;"></i>
+    </div>
+
+    <div class="test-section">
+        <h2>Console Output:</h2>
+        <div id="console"></div>
+    </div>
+
+    <script>
+        const consoleDiv = document.getElementById('console');
+
+        function log(message) {
+            consoleDiv.innerHTML += message + '<br>';
+            console.log(message);
+        }
+
+        log('1. Page loaded');
+        log('2. Lucide available: ' + (typeof lucide !== 'undefined'));
+
+        if (typeof lucide !== 'undefined') {
+            log('3. Lucide object: ' + typeof lucide);
+            log('4. createIcons function: ' + typeof lucide.createIcons);
+
+            try {
+                lucide.createIcons();
+                log('5. ✓ createIcons() called successfully');
+
+                // Count icon elements
+                const iconElements = document.querySelectorAll('[data-lucide]');
+                log('6. Found ' + iconElements.length + ' icon elements');
+
+                // Check if they were replaced with SVGs
+                setTimeout(() => {
+                    const svgs = document.querySelectorAll('svg');
+                    log('7. Found ' + svgs.length + ' SVG elements after initialization');
+                }, 100);
+            } catch (error) {
+                log('5. ✗ Error calling createIcons(): ' + error.message);
+            }
+        } else {
+            log('3. ✗ Lucide library not loaded!');
+        }
+    </script>
+</body>
+</html>

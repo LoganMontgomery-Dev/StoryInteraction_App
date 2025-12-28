@@ -6,32 +6,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsModal = document.getElementById('settingsModal');
     const closeModal = document.getElementById('closeModal');
 
-    // Wait for Lucide to initialize icons, then attach event listeners
-    setTimeout(() => {
-        const settingsIcon = document.getElementById('settingsIcon');
-
+    // Open modal - use event delegation to handle Lucide icon replacement
+    document.addEventListener('click', (e) => {
+        // Check if click target is settings icon or its child SVG
+        const settingsIcon = e.target.closest('#settingsIcon');
         if (settingsIcon) {
-            // Open modal
-            settingsIcon.addEventListener('click', () => {
+            e.stopPropagation();
+            if (settingsModal) {
                 settingsModal.classList.add('active');
                 lucide.createIcons(); // Reinitialize icons in modal
-            });
-        }
-
-        // Close modal
-        if (closeModal) {
-            closeModal.addEventListener('click', () => {
-                settingsModal.classList.remove('active');
-            });
-        }
-    }, 100);
-
-    // Close on overlay click
-    settingsModal.addEventListener('click', (e) => {
-        if (e.target === settingsModal) {
-            settingsModal.classList.remove('active');
+            }
         }
     });
+
+    // Close modal - X button (use event delegation for Lucide icon)
+    document.addEventListener('click', (e) => {
+        const closeBtn = e.target.closest('#closeModal');
+        if (closeBtn) {
+            e.stopPropagation();
+            if (settingsModal) {
+                settingsModal.classList.remove('active');
+            }
+        }
+    });
+
+    // Close on overlay click
+    if (settingsModal) {
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                settingsModal.classList.remove('active');
+            }
+        });
+    }
 
     // Close on Escape key
     document.addEventListener('keydown', (e) => {
