@@ -31,6 +31,10 @@
                 <i data-lucide="folder-x" style="width: 14px; height: 14px;"></i>
                 Unsaved Chat
             </span>
+            <button class="top-bar-btn" id="autoSyncToggle" title="Toggle Auto-Sync" style="margin-left: 12px; padding: 6px 12px;">
+                <i data-lucide="refresh-ccw" style="width: 14px; height: 14px;"></i>
+                <span id="autoSyncLabel">Auto-Sync: OFF</span>
+            </button>
         </div>
         <div class="top-bar-icons">
             <button class="top-bar-btn" id="openWikiBtn" title="Open Wiki">
@@ -116,39 +120,18 @@
                         <div class="card-header">
                             <i data-lucide="book-open" style="width: 18px; height: 18px;"></i>
                             Lore Used This Session
+                            <button class="top-bar-btn" id="createPageBtn" style="margin-left: auto; padding: 4px 10px; font-size: 0.85em; display: none;" title="Create New Page">
+                                <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                                New Page
+                            </button>
                         </div>
                         <div class="card-body">
                             <div id="loreList">
-                                <!-- Mockup data - will be populated dynamically -->
-                                <div class="lore-item" onclick="viewLoreFile('Lyssia.md')">
-                                    <div class="lore-item-header">
-                                        <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
-                                        <span class="lore-filename">Lyssia.md</span>
-                                        <span class="lore-count">3 times</span>
-                                    </div>
-                                </div>
-
-                                <div class="lore-item" onclick="viewLoreFile('Ancient_Ruins.md')">
-                                    <div class="lore-item-header">
-                                        <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
-                                        <span class="lore-filename">Ancient_Ruins.md</span>
-                                        <span class="lore-count">2 times</span>
-                                    </div>
-                                </div>
-
-                                <div class="lore-item" onclick="viewLoreFile('The_Dust.md')">
-                                    <div class="lore-item-header">
-                                        <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
-                                        <span class="lore-filename">The_Dust.md</span>
-                                        <span class="lore-count">1 time</span>
-                                    </div>
-                                </div>
-
-                                <!-- Empty state (will be shown when no lore used yet) -->
-                                <div id="loreEmptyState" style="display: none; text-align: center; color: var(--secondary-text); padding: 40px 20px;">
+                                <!-- Lore pages will be populated when a wiki is loaded -->
+                                <div id="loreEmptyState" style="text-align: center; color: var(--secondary-text); padding: 40px 20px;">
                                     <i data-lucide="inbox" style="width: 48px; height: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
-                                    <div>No lore files used yet</div>
-                                    <div style="font-size: 0.9em; margin-top: 8px;">Start a conversation to see which lore gets referenced</div>
+                                    <div>No wiki loaded</div>
+                                    <div style="font-size: 0.9em; margin-top: 8px;">Open or create a wiki to see its pages here</div>
                                 </div>
                             </div>
                         </div>
@@ -562,46 +545,8 @@
                     or select from recent wikis:
                 </div>
 
-                <div class="wiki-list">
-                    <!-- Mockup wiki items -->
-                    <div class="wiki-item" onclick="openWiki('desert_adventure')">
-                        <div class="wiki-item-icon">
-                            <i data-lucide="book" style="width: 24px; height: 24px;"></i>
-                        </div>
-                        <div class="wiki-item-info">
-                            <div class="wiki-item-name">Desert Adventure</div>
-                            <div class="wiki-item-meta">Last updated: 2 days ago • 23 messages</div>
-                        </div>
-                        <div class="wiki-item-actions">
-                            <i data-lucide="chevron-right" style="width: 18px; height: 18px; color: var(--secondary-text);"></i>
-                        </div>
-                    </div>
-
-                    <div class="wiki-item" onclick="openWiki('lyssia_journey')">
-                        <div class="wiki-item-icon">
-                            <i data-lucide="book" style="width: 24px; height: 24px;"></i>
-                        </div>
-                        <div class="wiki-item-info">
-                            <div class="wiki-item-name">Lyssia's Journey</div>
-                            <div class="wiki-item-meta">Last updated: 1 week ago • 47 messages</div>
-                        </div>
-                        <div class="wiki-item-actions">
-                            <i data-lucide="chevron-right" style="width: 18px; height: 18px; color: var(--secondary-text);"></i>
-                        </div>
-                    </div>
-
-                    <div class="wiki-item" onclick="openWiki('ruins_exploration')">
-                        <div class="wiki-item-icon">
-                            <i data-lucide="book" style="width: 24px; height: 24px;"></i>
-                        </div>
-                        <div class="wiki-item-info">
-                            <div class="wiki-item-name">Ruins Exploration</div>
-                            <div class="wiki-item-meta">Last updated: 3 weeks ago • 12 messages</div>
-                        </div>
-                        <div class="wiki-item-actions">
-                            <i data-lucide="chevron-right" style="width: 18px; height: 18px; color: var(--secondary-text);"></i>
-                        </div>
-                    </div>
+                <div class="wiki-list" id="wikiList">
+                    <!-- Wiki items will be populated dynamically -->
 
                     <!-- Empty state -->
                     <div id="wikiEmptyState" style="display: none; text-align: center; padding: 60px 20px; color: var(--secondary-text);">
@@ -763,6 +708,90 @@
         </div>
     </div>
 
+    <!-- Wiki Page Editor Modal -->
+    <div class="modal-overlay" id="pageEditorModal">
+        <div class="settings-modal" style="max-width: 900px;">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i data-lucide="edit" style="width: 20px; height: 20px; margin-right: 8px;"></i>
+                    <span id="pageEditorTitle">Edit Page</span>
+                </div>
+                <i data-lucide="x" class="modal-close" id="closePageEditorModal"></i>
+            </div>
+
+            <div class="modal-body">
+                <div style="display: grid; gap: 16px;">
+                    <!-- Page Name -->
+                    <div class="setting-item">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">Page Name</label>
+                        <input type="text" id="pageNameInput" placeholder="Character Name, Location Name, etc." style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color);">
+                    </div>
+
+                    <!-- Category -->
+                    <div class="setting-item">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">Category</label>
+                        <select id="pageCategorySelect" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color);">
+                            <option value="characters">Characters</option>
+                            <option value="locations">Locations</option>
+                            <option value="items">Items</option>
+                            <option value="events">Events</option>
+                        </select>
+                    </div>
+
+                    <!-- Content Editor -->
+                    <div class="setting-item">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">Content (Markdown)</label>
+                        <textarea id="pageContentEditor" rows="15" placeholder="# Page Title&#10;&#10;## Section&#10;&#10;Your content here..." style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); font-family: 'Courier New', monospace; resize: vertical;"></textarea>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: 12px; justify-content: space-between;">
+                        <button id="deletePageBtn" class="top-bar-btn" style="background: #dc3545; display: none;">
+                            <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                            Delete Page
+                        </button>
+                        <div style="display: flex; gap: 12px; margin-left: auto;">
+                            <button onclick="closePageEditorModal()" class="top-bar-btn">Cancel</button>
+                            <button id="savePageBtn" class="top-bar-btn primary">
+                                <i data-lucide="save" style="width: 16px; height: 16px;"></i>
+                                Save Page
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Session Browser Modal -->
+    <div class="modal-overlay" id="sessionBrowserModal">
+        <div class="settings-modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i data-lucide="clock" style="width: 20px; height: 20px; margin-right: 8px;"></i>
+                    Session History
+                </div>
+                <i data-lucide="x" class="modal-close" id="closeSessionBrowserModal"></i>
+            </div>
+
+            <div class="modal-body">
+                <div style="margin-bottom: 20px; color: var(--secondary-text); font-size: 0.9em;">
+                    <span id="sessionBrowserWikiName"></span> • <span id="sessionBrowserSessionCount"></span>
+                </div>
+
+                <div id="sessionList" style="max-height: 500px; overflow-y: auto;">
+                    <!-- Sessions will be populated here -->
+                </div>
+
+                <div id="sessionEmptyState" style="display: none; text-align: center; padding: 60px 20px; color: var(--secondary-text);">
+                    <i data-lucide="inbox" style="width: 64px; height: 64px; opacity: 0.3; margin-bottom: 16px;"></i>
+                    <div style="font-size: 1.1em; margin-bottom: 8px;">No sessions found</div>
+                    <div style="font-size: 0.9em;">Save a conversation to this wiki to see it here</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="/static/js/theme.js"></script>
     <script src="/static/js/panels.js"></script>
@@ -773,33 +802,9 @@
     <script src="/static/js/app.js"></script>
 
     <script>
-        // Initialize Lucide icons with debugging
-        console.log('=== LUCIDE DEBUG ===');
-        console.log('1. Lucide available:', typeof lucide !== 'undefined');
-        console.log('2. Icon elements before:', document.querySelectorAll('[data-lucide]').length);
-
+        // Initialize Lucide icons
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
-            console.log('3. createIcons() called');
-
-            setTimeout(() => {
-                const svgs = document.querySelectorAll('svg');
-                const icons = document.querySelectorAll('[data-lucide]');
-                console.log('4. SVG elements after:', svgs.length);
-                console.log('5. Remaining [data-lucide] elements:', icons.length);
-
-                if (svgs.length > 0) {
-                    const firstSvg = svgs[0];
-                    const computedStyle = window.getComputedStyle(firstSvg);
-                    console.log('6. First SVG element:', firstSvg);
-                    console.log('7. SVG computed width:', computedStyle.width);
-                    console.log('8. SVG computed height:', computedStyle.height);
-                    console.log('9. SVG display:', computedStyle.display);
-                    console.log('10. SVG visibility:', computedStyle.visibility);
-                    console.log('11. SVG opacity:', computedStyle.opacity);
-                    console.log('12. SVG color/stroke:', computedStyle.stroke || computedStyle.color);
-                }
-            }, 100);
         }
     </script>
 </body>

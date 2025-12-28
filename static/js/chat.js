@@ -3,7 +3,6 @@
    ============================================================================ */
 
 let sessionId = null;
-const API_URL = 'http://localhost:8000';
 
 function addMessage(content, isUser, loreUsed = []) {
     const chatContainer = document.getElementById('chatContainer');
@@ -114,12 +113,16 @@ async function sendMessage() {
         // Update session ID if this is the first message
         if (!sessionId) {
             sessionId = data.session_id;
-            console.log('Session started:', sessionId);
         }
 
         // Hide loading and add AI response
         hideLoading();
         addMessage(data.narrative, false, data.lore_used);
+
+        // Auto-save to wiki if enabled
+        if (typeof autoSaveToWiki === 'function') {
+            await autoSaveToWiki();
+        }
 
     } catch (error) {
         hideLoading();

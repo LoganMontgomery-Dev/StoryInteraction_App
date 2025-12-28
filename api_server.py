@@ -11,13 +11,13 @@ from pathlib import Path
 from typing import Optional, List
 from datetime import datetime
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi import Request
 from pydantic import BaseModel
+from contextlib import asynccontextmanager
 
 import chromadb
 from chromadb.config import Settings
@@ -25,6 +25,8 @@ from langchain_anthropic import ChatAnthropic
 from langgraph.graph import StateGraph, END
 from typing import TypedDict
 import json
+
+from wiki_manager import WikiManager
 
 # ============================================================================
 # Pydantic Models for API
@@ -201,40 +203,23 @@ Respond with either:
         return state
 
 # ============================================================================
-# FastAPI App
-# ============================================================================
-
-app = FastAPI(
-    title="DOAMMO Narrative Engine API",
-    description="AI-powered interactive storytelling for the DOAMMO universe",
-    version="1.0.0"
-)
-
-# Set up templates for HTML frontend
-templates = Jinja2Templates(directory="templates")
-
-# Add CORS middleware to allow web frontend connections
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # In production, specify your frontend URL
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# ============================================================================
-# Global State (initialized on startup)
+# Global State
 # ============================================================================
 
 chroma_collection = None
 llm = None
 workflow_app = None
 conv_managers = {}
+wiki_manager = None
 
-@app.on_event("startup")
-async def startup_event():
-    """Initialize system on startup"""
-    global chroma_collection, llm, workflow_app
+# ============================================================================
+# Lifespan Context Manager (must be defined before app initialization)
+# ============================================================================
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Initialize system on startup and cleanup on shutdown"""
+    global chroma_collection, llm, workflow_app, wiki_manager
 
     print("Initializing DOAMMO Narrative Engine API...")
 
@@ -284,7 +269,39 @@ async def startup_event():
     workflow.add_edge("quality", END)
     workflow_app = workflow.compile()
 
+    # Initialize Wiki Manager
+    wiki_manager = WikiManager()
+    print(f"Wiki Manager initialized (user_data directory)")
+
     print("API ready!")
+
+    yield  # Server runs here
+
+    # Cleanup (runs on shutdown)
+    print("Shutting down...")
+
+# ============================================================================
+# FastAPI App
+# ============================================================================
+
+app = FastAPI(
+    title="DOAMMO Narrative Engine API",
+    description="AI-powered interactive storytelling for the DOAMMO universe",
+    version="1.0.0",
+    lifespan=lifespan
+)
+
+# Set up templates for HTML frontend
+templates = Jinja2Templates(directory="templates")
+
+# Add CORS middleware to allow web frontend connections
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify your frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ============================================================================
 # API Endpoints
@@ -474,6 +491,133 @@ async def export_session(session_id: str):
             "Content-Disposition": f"attachment; filename=DOAMMO_Story_{session_id}.txt"
         }
     )
+
+# ============================================================================
+# Wiki API Endpoints
+# ============================================================================
+
+@app.post("/wiki/create")
+async def create_wiki(data: dict):
+    """Create a new story wiki"""
+    wiki_name = data.get("name")
+    description = data.get("description", "")
+
+    if not wiki_name:
+        raise HTTPException(status_code=400, detail="Wiki name is required")
+
+    try:
+        metadata = wiki_manager.create_wiki(wiki_name, description)
+        return {
+            "success": True,
+            "wiki": metadata
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/wiki/list")
+async def list_wikis():
+    """List all available wikis"""
+    wikis = wiki_manager.list_wikis()
+    return {
+        "success": True,
+        "wikis": wikis
+    }
+
+@app.get("/wiki/{wiki_name}")
+async def get_wiki(wiki_name: str):
+    """Get wiki metadata and sessions list"""
+    try:
+        metadata = wiki_manager.get_wiki_metadata(wiki_name)
+        sessions = wiki_manager.load_wiki_sessions(wiki_name)
+        pages = wiki_manager.list_wiki_pages(wiki_name)
+
+        return {
+            "success": True,
+            "metadata": metadata,
+            "sessions": sessions,
+            "pages": pages
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/wiki/{wiki_name}/save_session")
+async def save_session_to_wiki(wiki_name: str, data: dict):
+    """Save current session to wiki"""
+    session_id = data.get("session_id")
+
+    if not session_id:
+        raise HTTPException(status_code=400, detail="Session ID is required")
+
+    if session_id not in conv_managers:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    conv_manager = conv_managers[session_id]
+
+    try:
+        wiki_manager.save_session_to_wiki(
+            wiki_name,
+            session_id,
+            conv_manager.conversation_history
+        )
+        return {
+            "success": True,
+            "message": f"Session saved to wiki '{wiki_name}'"
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/wiki/{wiki_name}/session/{session_id}")
+async def load_session_from_wiki(wiki_name: str, session_id: str):
+    """Load a session from a wiki"""
+    try:
+        conversation = wiki_manager.load_session_from_wiki(wiki_name, session_id)
+        return {
+            "success": True,
+            "conversation": conversation
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/wiki/{wiki_name}/page/{category}/{page_name}")
+async def read_wiki_page(wiki_name: str, category: str, page_name: str):
+    """Read a wiki page"""
+    try:
+        content = wiki_manager.read_wiki_page(wiki_name, category, page_name)
+        return {
+            "success": True,
+            "content": content
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/wiki/{wiki_name}/page/{category}/{page_name}")
+async def write_wiki_page(wiki_name: str, category: str, page_name: str, data: dict):
+    """Create or update a wiki page"""
+    content = data.get("content")
+
+    if content is None:
+        raise HTTPException(status_code=400, detail="Content is required")
+
+    try:
+        wiki_manager.write_wiki_page(wiki_name, category, page_name, content)
+        return {
+            "success": True,
+            "message": f"Page '{page_name}' saved"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/wiki/{wiki_name}/page/{category}/{page_name}")
+async def delete_wiki_page(wiki_name: str, category: str, page_name: str):
+    """Delete a wiki page"""
+    try:
+        wiki_manager.delete_wiki_page(wiki_name, category, page_name)
+        return {
+            "success": True,
+            "message": f"Page '{page_name}' deleted"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Mount static files (must be last to not interfere with API routes)
 app.mount("/static", StaticFiles(directory="static"), name="static")
