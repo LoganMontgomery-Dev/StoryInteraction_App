@@ -1,12 +1,12 @@
 # DOAMMO Narrative Engine
 
-An AI-powered interactive storytelling system for the DOAMMO universe, featuring intelligent lore retrieval, conversation memory, multi-agent orchestration, and context-aware narrative generation.
+An AI-powered interactive storytelling system for the DOAMMO universe, featuring intelligent lore retrieval, conversation memory, multi-agent orchestration, context-aware narrative generation, and a complete wiki management system.
 
 ## Project Status
 
-**Current Phase:** Phase 1 Complete. ALL 9 milestones done ✓
-**System Status:** Fully operational web application
-**Next Phase:** Phase 2 - LM Studio integration and advanced features
+**Current Phase:** Phase 2 In Progress - Wiki System Complete ✓
+**System Status:** Fully operational web application with wiki management
+**Next Feature:** Lore Keeper AI System (auto-updating wiki from conversations)
 
 ## Quick Start
 
@@ -14,22 +14,75 @@ An AI-powered interactive storytelling system for the DOAMMO universe, featuring
 - Python 3.10+
 - Anthropic API key (Claude)
 
+### Installation
+```bash
+# Install dependencies
+pip install fastapi uvicorn langchain-anthropic chromadb langgraph python-dotenv
+
+# Set up API key in .env file
+echo "ANTHROPIC_API_KEY=your_key_here" > .env
+```
+
 ### Running the Application
 ```bash
-# Activate virtual environment
-.\venv\Scripts\activate
-
 # Start the web server
-uvicorn api_server:app --reload
+python api_server.py
 
 # Open in browser
 # http://localhost:8000
 ```
 
+## Features
+
+### Phase 1: Core Engine ✓
+- 🎯 **Intelligent Lore Retrieval** - Semantic search using ChromaDB
+- 🤖 **Multi-Agent System** - Lore Keeper, Narrator, and Quality agents
+- 💬 **Conversation Memory** - Session management and history
+- 🌐 **Web Interface** - Beautiful UI with real-time chat
+- 🔌 **REST API** - Full programmatic access
+- 📚 **Vault Integration** - Read-only lore access (never modifies your files)
+
+### Phase 2: Wiki System ✓
+- 📖 **Wiki Management** - Create and manage multiple story wikis
+- 💾 **Session Storage** - Save conversations to wikis for later reference
+- 📝 **Page Editor** - Create, edit, and delete wiki pages with markdown
+- 📂 **Category Organization** - Characters, Locations, Items, Events
+- 🔄 **Auto-Sync** - Optional automatic wiki saving after each AI response
+- 📜 **Session Browser** - View and load previous sessions from wikis
+- 🏗️ **Template System** - Pre-formatted templates for different page types
+- 📁 **Multi-Wiki Support** - Multiple wikis per user with folder structure
+
+### Wiki System Architecture
+
+**File Structure:**
+```
+user_data/
+└── {username}/
+    └── wikis/
+        └── {wiki_name}/
+            ├── wiki_metadata.json
+            ├── sessions/
+            │   └── {session_id}.json
+            └── pages/
+                ├── characters/
+                ├── locations/
+                ├── items/
+                └── events/
+```
+
+**API Endpoints:**
+- `POST /wiki/create` - Create new wiki
+- `GET /wiki/list` - List all wikis
+- `GET /wiki/{name}` - Get wiki details
+- `POST /wiki/{name}/save_session` - Save conversation to wiki
+- `GET /wiki/{name}/session/{id}` - Load session from wiki
+- `GET /wiki/{name}/page/{category}/{name}` - Read wiki page
+- `POST /wiki/{name}/page/{category}/{name}` - Create/update page
+- `DELETE /wiki/{name}/page/{category}/{name}` - Delete page
+
 ## What's Built
 
 ### Phase 1: Complete ✓
-
 - [x] **Milestone 0**: Environment Setup
 - [x] **Milestone 1**: Claude API Connection
 - [x] **Milestone 2**: Vault Reading
@@ -41,27 +94,22 @@ uvicorn api_server:app --reload
 - [x] **Milestone 8**: FastAPI REST Backend
 - [x] **Milestone 9**: Web Frontend UI
 
-### Features
-- 🎯 Intelligent lore retrieval using semantic search
-- 🤖 Multi-agent system (Lore Keeper, Narrator, Quality agents)
-- 💬 Conversation memory and session management
-- 🌐 Beautiful web interface with real-time chat
-- 🔌 REST API for programmatic access
-- 📚 Read-only vault integration (never modifies your lore)
-- 🎨 Modern gradient UI with smooth animations
+### Phase 2: Wiki System Complete ✓
+- [x] **Backend Integration** - WikiManager class for file operations
+- [x] **Session Management** - Save/load conversations from wikis
+- [x] **Page Editor** - Full CRUD operations for wiki pages
+- [x] **Session Browser** - View and restore previous sessions
+- [x] **Auto-Sync Toggle** - Automatic wiki saving option
+- [x] **Template System** - Pre-formatted page templates
 
-See [_DOAMMO_Development_Milestones.md](_DOAMMO_Development_Milestones.md) for detailed milestone descriptions.
+## Tech Stack
 
-## Architecture
-
-See [_DOAMMO_AI_System_Overview.md](_DOAMMO_AI_System_Overview.md) for complete technical specification.
-
-### Tech Stack
 - **Backend**: FastAPI, LangChain/LangGraph
 - **Vector DB**: ChromaDB (local semantic search with all-MiniLM-L6-v2 embeddings)
 - **LLM**: Claude Sonnet 4 (Anthropic API)
-- **Session Storage**: JSON files (local, gitignored)
-- **Frontend**: HTML/CSS/JavaScript with Jinja2 templating
+- **Wiki Storage**: Local file system (JSON + Markdown)
+- **Session Storage**: JSON files (gitignored)
+- **Frontend**: HTML/CSS/JavaScript with Jinja2 templating, Lucide icons
 
 ## Project Structure
 
@@ -70,21 +118,42 @@ DOAMMO_APP/
 ├── venv/                              # Virtual environment
 ├── templates/                         # HTML templates
 │   └── index.html                    # Web frontend
-├── sessions/                          # Conversation sessions (gitignored)
+├── static/                            # Frontend assets
+│   ├── css/                          # Stylesheets
+│   └── js/                           # JavaScript modules
+│       ├── app.js                    # Main app logic
+│       ├── chat.js                   # Chat functionality
+│       ├── wiki.js                   # Wiki management
+│       ├── settings.js               # Settings panel
+│       └── controls.js               # UI controls
+├── user_data/                         # User wikis and data (gitignored)
+├── sessions/                          # Legacy session storage (gitignored)
 ├── chroma_data/                       # ChromaDB vector database (gitignored)
 ├── api_server.py                      # FastAPI REST backend
-├── interactive_multiagent.py          # Interactive multi-agent terminal interface
-├── test_*.py                          # Test scripts for each milestone
+├── wiki_manager.py                    # Wiki file operations
+├── interactive_multiagent.py          # Interactive terminal interface
+├── test_*.py                          # Test scripts
 └── README.md                          # This file
 ```
 
 ## Usage
 
 ### Web Interface (Recommended)
-1. you have to connect the app to a folder of documents, which would be character bios, storylines, locations, and otherworld building information for the ai to draw on.)
-1. Start the server: `uvicorn api_server:app --reload`
-2. Open http://localhost:8000
-3. Type scenarios and get AI-generated narratives
+
+1. **Connect to your lore vault** - Point the app to a folder containing your world-building documents (character bios, storylines, locations, etc.)
+2. **Start the server**: `python api_server.py`
+3. **Open browser**: http://localhost:8000
+4. **Create a wiki**: Click "Save to Wiki" to create your first story wiki
+5. **Start chatting**: Type scenarios and get AI-generated narratives
+6. **Manage wikis**: Use "Open Wiki" to browse, load sessions, and edit pages
+
+### Wiki Workflow
+
+1. **Create Wiki** - Save your first conversation to create a new wiki
+2. **Auto-Sync** - Toggle auto-sync to automatically save after each AI response
+3. **Edit Pages** - Click edit buttons to modify wiki pages or create new ones
+4. **Browse Sessions** - View all saved sessions and load them back into chat
+5. **Organize Lore** - Categorize pages as Characters, Locations, Items, or Events
 
 ### Interactive Terminal
 ```bash
@@ -95,16 +164,26 @@ Shows detailed output from all three agents (Lore Keeper, Narrator, Quality)
 ### API Access
 Interactive docs at http://localhost:8000/docs
 
-## Next Phase: Phase 2
+## Next Feature: Lore Keeper AI System
 
-Planned enhancements:
-- Advanced multi-agent features
-- UI enhancements (settings panel, themes)
-- World state tracking
-- Additional specialized agents
-- LM Studio integration (local LLM option)
-- Switchable backend (Claude vs LM Studio)
-- 
+The next major feature will be an AI-powered system that automatically watches conversations and updates the wiki:
+
+**Planned Features:**
+- **AI-Powered Entity Detection** - Automatically detect characters, locations, items, and events
+- **Confidence Scoring** - Assign confidence scores to detected entities (like face detection)
+- **Auto-Update Wiki** - Create and update wiki pages based on conversations
+- **Configurable System Prompt** - Customize what the Lore Keeper focuses on
+- **Threshold Controls** - Only write lore if confidence > threshold
+- **Verbosity Settings** - Control how much detail to write
+- **Toggle Modes** - Ask before writing vs fully automatic
+
+## Development
+
+See additional documentation:
+- [_DOAMMO_Development_Milestones.md](_DOAMMO_Development_Milestones.md) - Detailed milestone descriptions
+- [_DOAMMO_AI_System_Overview.md](_DOAMMO_AI_System_Overview.md) - Technical architecture
+- [_DOAMMO_Development_Journal.md](_DOAMMO_Development_Journal.md) - Development log
+
 ## Reference Material
 
 - **SillyTavern**: Cloned locally for UI/UX reference (frontend patterns only)
