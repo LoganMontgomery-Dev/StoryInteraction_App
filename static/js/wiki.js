@@ -66,6 +66,11 @@ async function openWikiBrowserModal() {
     // Fetch wiki list from backend
     try {
         const response = await fetch(`${API_URL}/wiki/list`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
 
         if (data.success) {
@@ -74,6 +79,12 @@ async function openWikiBrowserModal() {
         }
     } catch (error) {
         console.error('Error loading wikis:', error);
+        if (typeof showNotification === 'function') {
+            showNotification('Failed to load wikis. Check if API server is running.', 'error');
+        } else {
+            alert('Failed to load wikis. Check if API server is running.');
+        }
+        return; // Don't open modal if loading failed
     }
 
     modal.classList.add('active');

@@ -45,6 +45,10 @@
                 <i data-lucide="save" style="width: 16px; height: 16px;"></i>
                 Save to Wiki
             </button>
+            <button class="top-bar-btn" id="exportBtn" title="Export Chat">
+                <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+                Export
+            </button>
             <i data-lucide="bell" class="top-bar-icon" id="notificationsIcon" title="Notifications"></i>
             <i data-lucide="user" class="top-bar-icon" id="profileIcon" title="Profile"></i>
             <i data-lucide="settings" class="top-bar-icon" id="settingsIcon" title="Settings"></i>
@@ -787,6 +791,51 @@
                     <i data-lucide="inbox" style="width: 64px; height: 64px; opacity: 0.3; margin-bottom: 16px;"></i>
                     <div style="font-size: 1.1em; margin-bottom: 8px;">No sessions found</div>
                     <div style="font-size: 0.9em;">Save a conversation to this wiki to see it here</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="exportModal">
+        <div class="settings-modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i data-lucide="download" style="width: 20px; height: 20px; margin-right: 8px;"></i>
+                    Export Chat
+                </div>
+                <i data-lucide="x" class="modal-close" id="closeExportModal"></i>
+            </div>
+
+            <div class="modal-body">
+                <div style="margin-bottom: 20px; color: var(--secondary-text); font-size: 0.9em;">
+                    Export your conversation in various formats
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <button class="export-option-btn" onclick="exportChatToMarkdown()">
+                        <i data-lucide="file-text" style="width: 20px; height: 20px;"></i>
+                        <div>
+                            <div style="font-weight: 500;">Markdown (.md)</div>
+                            <div style="font-size: 0.85em; opacity: 0.7;">Formatted text file with lore references</div>
+                        </div>
+                    </button>
+
+                    <button class="export-option-btn" onclick="exportChatToJSON()">
+                        <i data-lucide="code" style="width: 20px; height: 20px;"></i>
+                        <div>
+                            <div style="font-weight: 500;">JSON (.json)</div>
+                            <div style="font-size: 0.85em; opacity: 0.7;">Structured data with metadata</div>
+                        </div>
+                    </button>
+
+                    <button class="export-option-btn" onclick="copyToClipboard()">
+                        <i data-lucide="clipboard" style="width: 20px; height: 20px;"></i>
+                        <div>
+                            <div style="font-weight: 500;">Copy to Clipboard</div>
+                            <div style="font-size: 0.85em; opacity: 0.7;">Plain text copy</div>
+                        </div>
+                    </button>
                 </div>
             </div>
         </div>
