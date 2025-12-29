@@ -114,26 +114,8 @@ user_data/
 ## Project Structure
 
 ```
-DOAMMO_APP/
-├── venv/                              # Virtual environment
-├── templates/                         # HTML templates
-│   └── index.html                    # Web frontend
-├── static/                            # Frontend assets
-│   ├── css/                          # Stylesheets
-│   └── js/                           # JavaScript modules
-│       ├── app.js                    # Main app logic
-│       ├── chat.js                   # Chat functionality
-│       ├── wiki.js                   # Wiki management
-│       ├── settings.js               # Settings panel
-│       └── controls.js               # UI controls
-├── user_data/                         # User wikis and data (gitignored)
-├── sessions/                          # Legacy session storage (gitignored)
-├── chroma_data/                       # ChromaDB vector database (gitignored)
-├── api_server.py                      # FastAPI REST backend
-├── wiki_manager.py                    # Wiki file operations
-├── interactive_multiagent.py          # Interactive terminal interface
-├── test_*.py                          # Test scripts
-└── README.md                          # This file
+
+
 ```
 
 ## Usage
@@ -170,23 +152,12 @@ The next major feature will be an AI-powered system that automatically watches c
 
 **Planned Features:**
 - **AI-Powered Entity Detection** - Automatically detect characters, locations, items, and events
-- **Confidence Scoring** - Assign confidence scores to detected entities (like face detection)
+- **Confidence Scoring** - Assign confidence scores to detected entities 
 - **Auto-Update Wiki** - Create and update wiki pages based on conversations
 - **Configurable System Prompt** - Customize what the Lore Keeper focuses on
 - **Threshold Controls** - Only write lore if confidence > threshold
 - **Verbosity Settings** - Control how much detail to write
 - **Toggle Modes** - Ask before writing vs fully automatic
-
-## Development
-
-See additional documentation:
-- [_DOAMMO_Development_Milestones.md](_DOAMMO_Development_Milestones.md) - Detailed milestone descriptions
-- [_DOAMMO_AI_System_Overview.md](_DOAMMO_AI_System_Overview.md) - Technical architecture
-- [_DOAMMO_Development_Journal.md](_DOAMMO_Development_Journal.md) - Development log
-
-## Reference Material
-
-- **SillyTavern**: Cloned locally for UI/UX reference (frontend patterns only)
 
 ## License
 
