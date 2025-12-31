@@ -22,6 +22,7 @@ from contextlib import asynccontextmanager
 import chromadb
 from chromadb.config import Settings
 from langchain_anthropic import ChatAnthropic
+from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, END
 from typing import TypedDict
 import json
@@ -66,6 +67,17 @@ class NarrativeState(TypedDict):
     narrative: str
     quality_check: str
     final_output: str
+    use_lmstudio: bool  # Router flag
+
+
+def route_to_llm(user_input: str) -> bool:
+    """
+    Determine which LLM to use based on user input.
+    Returns True if LM Studio should be used, False for Claude.
+
+    Rule: If message starts with 'lmstudio' (case-insensitive), use LM Studio.
+    """
+    return user_input.strip().lower().startswith("lmstudio")
 
 class ConversationManager:
     """Manages conversation history"""
@@ -141,8 +153,9 @@ class LoreKeeperAgent:
         return state
 
 class NarratorAgent:
-    def __init__(self, llm, conv_managers: dict):
-        self.llm = llm
+    def __init__(self, llm_claude, llm_lmstudio, conv_managers: dict):
+        self.llm_claude = llm_claude
+        self.llm_lmstudio = llm_lmstudio
         self.conv_managers = conv_managers
 
     def __call__(self, state: NarrativeState) -> NarrativeState:
@@ -150,6 +163,13 @@ class NarratorAgent:
         conv_manager = self.conv_managers.get(session_id)
 
         recent_context = conv_manager.get_recent_context() if conv_manager else ""
+
+        # Strip "lmstudio" prefix from user input for the actual prompt
+        user_input = state['user_input']
+        if state.get("use_lmstudio"):
+            user_input = user_input.strip()
+            if user_input.lower().startswith("lmstudio"):
+                user_input = user_input[8:].strip()  # Remove "lmstudio" prefix
 
         prompt = f"""You are the Narrator for the DOAMMO universe.
 
@@ -160,7 +180,7 @@ RECENT CONVERSATION CONTEXT:
 {recent_context}
 
 CURRENT USER INPUT:
-{state['user_input']}
+{user_input}
 
 Generate an engaging narrative response (2-3 paragraphs) that:
 - Uses specific details from the lore
@@ -170,7 +190,9 @@ Generate an engaging narrative response (2-3 paragraphs) that:
 - Responds naturally to the user's current input
 """
 
-        response = self.llm.invoke(prompt)
+        # Route to appropriate LLM
+        llm = self.llm_lmstudio if state.get("use_lmstudio") else self.llm_claude
+        response = llm.invoke(prompt)
         state["narrative"] = response.content
         return state
 
@@ -312,7 +334,8 @@ lore_extractor = None
 # ============================================================================
 
 chroma_collection = None
-llm = None
+llm_claude = None
+llm_lmstudio = None
 workflow_app = None
 conv_managers = {}
 wiki_manager = None
@@ -324,20 +347,23 @@ wiki_manager = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize system on startup and cleanup on shutdown"""
-    global chroma_collection, llm, workflow_app, wiki_manager, lore_extractor
+    global chroma_collection, llm_claude, llm_lmstudio, workflow_app, wiki_manager, lore_extractor
 
     print("Initializing DOAMMO Narrative Engine API...")
 
-    # Load API key
+    # Load environment variables
     env_path = ".env"
     api_key = None
+    lmstudio_url = "http://localhost:1234/v1"  # Default
 
     if os.path.exists(env_path):
         with open(env_path, 'r') as f:
             for line in f:
+                line = line.strip()
                 if line.startswith('ANTHROPIC_API_KEY='):
-                    api_key = line.strip().split('=', 1)[1]
-                    break
+                    api_key = line.split('=', 1)[1]
+                elif line.startswith('LM_STUDIO_URL='):
+                    lmstudio_url = line.split('=', 1)[1]
 
     if not api_key:
         raise RuntimeError("API key not found in .env file")
@@ -351,18 +377,27 @@ async def lifespan(app: FastAPI):
     chroma_collection = client.get_collection(name="doammo_lore")
     print(f"Connected to lore database ({chroma_collection.count()} documents)")
 
-    # Initialize LLM
-    llm = ChatAnthropic(
+    # Initialize Claude LLM
+    llm_claude = ChatAnthropic(
         model="claude-sonnet-4-20250514",
         api_key=api_key,
         max_tokens=600
     )
+    print("Claude LLM initialized")
+
+    # Initialize LM Studio LLM (OpenAI-compatible API)
+    llm_lmstudio = ChatOpenAI(
+        base_url=lmstudio_url,
+        api_key="lm-studio",  # LM Studio doesn't require a real key
+        max_tokens=600
+    )
+    print(f"LM Studio LLM configured at {lmstudio_url}")
 
     # Create agents
     lore_keeper = LoreKeeperAgent(chroma_collection)
-    narrator = NarratorAgent(llm, conv_managers)
-    quality = QualityAgent(llm)
-    lore_extractor = LoreExtractorAgent(llm)
+    narrator = NarratorAgent(llm_claude, llm_lmstudio, conv_managers)
+    quality = QualityAgent(llm_claude)  # Quality check always uses Claude
+    lore_extractor = LoreExtractorAgent(llm_claude)  # Lore extraction always uses Claude
 
     # Build workflow
     workflow = StateGraph(NarrativeState)
@@ -453,6 +488,11 @@ async def generate_narrative(request: NarrativeRequest):
 
     conv_manager = conv_managers[session_id]
 
+    # Determine which LLM to use
+    use_lmstudio = route_to_llm(request.user_input)
+    if use_lmstudio:
+        print(f"Routing to LM Studio for this request")
+
     # Add user input to conversation history
     conv_manager.add_message('user', request.user_input)
 
@@ -464,7 +504,8 @@ async def generate_narrative(request: NarrativeRequest):
         "lore_context": "",
         "narrative": "",
         "quality_check": "",
-        "final_output": ""
+        "final_output": "",
+        "use_lmstudio": use_lmstudio
     }
 
     try:
