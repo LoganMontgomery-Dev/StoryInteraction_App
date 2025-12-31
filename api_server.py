@@ -202,6 +202,111 @@ Respond with either:
         state["final_output"] = state["narrative"]
         return state
 
+class LoreExtractorAgent:
+    """Extracts lore entities (characters, locations, items, events) from narrative text."""
+
+    def __init__(self, llm):
+        self.llm = llm
+
+    def extract(self, narrative_text: str, existing_entities: dict = None) -> dict:
+        """
+        Extract lore entities from narrative text.
+
+        Args:
+            narrative_text: The narrative to analyze
+            existing_entities: Dict of existing entities to avoid duplicates
+
+        Returns:
+            Dict with extracted entities by category
+        """
+        existing_info = ""
+        if existing_entities:
+            existing_info = f"""
+EXISTING ENTITIES (avoid duplicates):
+- Characters: {', '.join(existing_entities.get('characters', []))}
+- Locations: {', '.join(existing_entities.get('locations', []))}
+- Items: {', '.join(existing_entities.get('items', []))}
+- Events: {', '.join(existing_entities.get('events', []))}
+"""
+
+        prompt = f"""Analyze the following narrative and extract any NEW lore entities.
+{existing_info}
+NARRATIVE:
+{narrative_text}
+
+Extract entities into these categories. For each entity, provide:
+- name: The entity name
+- description: A brief 1-2 sentence description based on what's revealed in the narrative
+- category: One of [characters, locations, items, events]
+
+IMPORTANT:
+- Only extract entities that are meaningfully described or play a role
+- Skip generic terms like "the ruins" unless they have a specific name
+- Focus on proper nouns and named entities
+- Do not include entities that already exist in the list above
+
+Respond in this exact JSON format:
+{{
+    "characters": [
+        {{"name": "Character Name", "description": "Brief description"}}
+    ],
+    "locations": [
+        {{"name": "Location Name", "description": "Brief description"}}
+    ],
+    "items": [
+        {{"name": "Item Name", "description": "Brief description"}}
+    ],
+    "events": [
+        {{"name": "Event Name", "description": "Brief description"}}
+    ]
+}}
+
+If no new entities are found for a category, use an empty array [].
+Respond ONLY with the JSON, no other text.
+"""
+
+        response = self.llm.invoke(prompt)
+
+        # Parse the JSON response
+        try:
+            import re
+            # Extract JSON from response (in case there's extra text)
+            json_match = re.search(r'\{[\s\S]*\}', response.content)
+            if json_match:
+                extracted = json.loads(json_match.group())
+                return extracted
+            else:
+                return {"characters": [], "locations": [], "items": [], "events": []}
+        except json.JSONDecodeError:
+            print(f"Failed to parse lore extraction response: {response.content}")
+            return {"characters": [], "locations": [], "items": [], "events": []}
+
+    def extract_from_conversation(self, messages: list, existing_entities: dict = None) -> dict:
+        """
+        Extract lore from an entire conversation.
+
+        Args:
+            messages: List of message dicts with 'role' and 'content'
+            existing_entities: Dict of existing entities to avoid duplicates
+
+        Returns:
+            Dict with all extracted entities
+        """
+        # Combine all AI responses into one text block
+        narrative_text = "\n\n---\n\n".join([
+            msg.get('content', '')
+            for msg in messages
+            if msg.get('role') == 'assistant'
+        ])
+
+        if not narrative_text.strip():
+            return {"characters": [], "locations": [], "items": [], "events": []}
+
+        return self.extract(narrative_text, existing_entities)
+
+# Global lore extractor instance
+lore_extractor = None
+
 # ============================================================================
 # Global State
 # ============================================================================
@@ -219,7 +324,7 @@ wiki_manager = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize system on startup and cleanup on shutdown"""
-    global chroma_collection, llm, workflow_app, wiki_manager
+    global chroma_collection, llm, workflow_app, wiki_manager, lore_extractor
 
     print("Initializing DOAMMO Narrative Engine API...")
 
@@ -257,6 +362,7 @@ async def lifespan(app: FastAPI):
     lore_keeper = LoreKeeperAgent(chroma_collection)
     narrator = NarratorAgent(llm, conv_managers)
     quality = QualityAgent(llm)
+    lore_extractor = LoreExtractorAgent(llm)
 
     # Build workflow
     workflow = StateGraph(NarrativeState)
@@ -618,6 +724,110 @@ async def delete_wiki_page(wiki_name: str, category: str, page_name: str):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================================================
+# Lore Extraction Endpoints
+# ============================================================================
+
+@app.post("/lore/extract")
+async def extract_lore_from_text(data: dict):
+    """Extract lore entities from narrative text."""
+    narrative = data.get("narrative", "")
+    existing_entities = data.get("existing_entities")
+
+    if not narrative:
+        raise HTTPException(status_code=400, detail="Narrative text is required")
+
+    try:
+        extracted = lore_extractor.extract(narrative, existing_entities)
+        return {
+            "success": True,
+            "extracted": extracted
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/lore/extract-session/{session_id}")
+async def extract_lore_from_session(session_id: str, data: dict = None):
+    """Extract lore from an entire conversation session."""
+    if session_id not in conv_managers:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    conv_manager = conv_managers[session_id]
+    existing_entities = data.get("existing_entities") if data else None
+
+    try:
+        extracted = lore_extractor.extract_from_conversation(
+            conv_manager.conversation_history,
+            existing_entities
+        )
+        return {
+            "success": True,
+            "session_id": session_id,
+            "extracted": extracted
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/lore/save-to-wiki/{wiki_name}")
+async def save_extracted_lore_to_wiki(wiki_name: str, data: dict):
+    """Save extracted lore entities to wiki pages."""
+    entities = data.get("entities", {})
+
+    if not entities:
+        raise HTTPException(status_code=400, detail="No entities provided")
+
+    saved = {"characters": [], "locations": [], "items": [], "events": []}
+    errors = []
+
+    for category in ["characters", "locations", "items", "events"]:
+        for entity in entities.get(category, []):
+            name = entity.get("name")
+            description = entity.get("description", "")
+
+            if not name:
+                continue
+
+            # Create markdown content for the page
+            content = f"""# {name}
+
+## Description
+
+{description}
+
+---
+*Auto-extracted by Lore Keeper*
+*Created: {datetime.now().strftime('%Y-%m-%d %H:%M')}*
+"""
+
+            try:
+                wiki_manager.write_wiki_page(wiki_name, category, name, content)
+                saved[category].append(name)
+            except Exception as e:
+                errors.append(f"Failed to save {category}/{name}: {str(e)}")
+
+    return {
+        "success": True,
+        "saved": saved,
+        "errors": errors if errors else None
+    }
+
+@app.get("/wiki/{wiki_name}/existing-entities")
+async def get_existing_entities(wiki_name: str):
+    """Get list of existing entity names in a wiki (to avoid duplicates)."""
+    try:
+        pages = wiki_manager.list_wiki_pages(wiki_name)
+        return {
+            "success": True,
+            "entities": {
+                "characters": pages.get("characters", []),
+                "locations": pages.get("locations", []),
+                "items": pages.get("items", []),
+                "events": pages.get("events", [])
+            }
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 # Mount static files (must be last to not interfere with API routes)
 app.mount("/static", StaticFiles(directory="static"), name="static")

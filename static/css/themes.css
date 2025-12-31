@@ -7,7 +7,7 @@
 :root[data-theme="doammo"] {
 
   /* Base Backgrounds */
-  --main-background: #0E292E;           /* body background */
+  --main-background: #18252e;           /* body background */
   --topbar-background: #11171d;         /* top bar with logo and icons */
   --panel-container-background: #15494880;  /* .panel-container glass effect (60% opacity) */
   --tab-navigation-background: #0b263f;     /* .tab-navigation and .content-card backgrounds */
@@ -20,7 +20,8 @@
   --theme-button-inactive-background: #464F9C80;  /* .theme-btn not active (50% opacity) */
 
   /* Borders & Outlines */
-  --panel-border: #15494880;            /* .glass-panel borders (30% opacity - calculated as 4D hex) */
+  --panel-border: #294256;              /* .glass-panel borders */
+  --story-panel-border: #154948;        /* story panel border (green) */
   --input-border: #4EA87A80;            /* .input-container border (30% opacity - calculated as 4D hex) */
   --input-focus-border: #4EA87A;        /* .input-container:focus-within */
   --ai-message-border: #4EA87A33;       /* .ai .message-content border (20% opacity) */

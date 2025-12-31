@@ -11,6 +11,41 @@
   box-shadow: 0 8px 24px var(--panel-shadow);
 }
 
+/* Story panel inner container */
+.story-panel .glass-panel {
+  border-color: var(--story-panel-border);
+}
+
+/* Director panel inner container */
+.director-panel .glass-panel {
+  background: #183957;
+  border-color: #285273;
+}
+
+.director-panel .content-card {
+  border-color: #285273;
+}
+
+.director-panel .tab-navigation {
+  border: 1px solid #285273;
+}
+
+.director-panel .btn-secondary {
+  border-color: #285273;
+}
+
+.director-panel .btn-secondary:hover {
+  border-color: #4a9eff;
+}
+
+.top-bar-btn {
+  border-color: #285273;
+}
+
+.top-bar-btn:hover {
+  border-color: #4a9eff;
+}
+
 .glass-card {
   background: var(--tab-navigation-background);
   backdrop-filter: blur(10px);

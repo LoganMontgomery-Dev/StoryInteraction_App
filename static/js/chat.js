@@ -124,6 +124,11 @@ async function sendMessage() {
             await autoSaveToWiki();
         }
 
+        // Lore Keeper - extract lore from narrative if enabled
+        if (typeof extractLoreFromNarrative === 'function') {
+            extractLoreFromNarrative(data.narrative);
+        }
+
     } catch (error) {
         hideLoading();
         showError(error, message);
@@ -331,4 +336,46 @@ function showNotification(message, type = 'success') {
 // Auto-focus input on page load
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('userInput').focus();
+    initJumpToEndButton();
 });
+
+/* ============================================================================
+   Jump to End Button
+   ============================================================================ */
+
+function initJumpToEndButton() {
+    const chatContainer = document.getElementById('chatContainer');
+    const jumpBtn = document.getElementById('jumpToEndBtn');
+
+    if (!chatContainer || !jumpBtn) return;
+
+    // Check scroll position and show/hide button
+    chatContainer.addEventListener('scroll', () => {
+        updateJumpButtonVisibility();
+    });
+
+    // Initial check
+    updateJumpButtonVisibility();
+}
+
+function updateJumpButtonVisibility() {
+    const chatContainer = document.getElementById('chatContainer');
+    const jumpBtn = document.getElementById('jumpToEndBtn');
+
+    if (!chatContainer || !jumpBtn) return;
+
+    // Calculate if we're near the bottom (within 100px)
+    const isNearBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < 100;
+
+    jumpBtn.style.display = isNearBottom ? 'none' : 'flex';
+}
+
+function jumpToEndOfChat() {
+    const chatContainer = document.getElementById('chatContainer');
+    if (!chatContainer) return;
+
+    chatContainer.scrollTo({
+        top: chatContainer.scrollHeight,
+        behavior: 'smooth'
+    });
+}

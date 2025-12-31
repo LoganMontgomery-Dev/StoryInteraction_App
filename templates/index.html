@@ -57,6 +57,12 @@
 
     <!-- Main Container -->
     <div class="main-container">
+        <!-- Story Panel Restore Tab (shown when story panel is collapsed) -->
+        <div class="panel-restore-tab left" id="storyRestoreTab" style="display: none;">
+            <i data-lucide="message-square" style="width: 16px; height: 16px;"></i>
+            <span>Story</span>
+        </div>
+
         <!-- Story Panel (Left) -->
         <div class="story-panel">
             <div class="panel-container glass-panel">
@@ -76,6 +82,12 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Jump to End Button -->
+                <button class="jump-to-end-btn" id="jumpToEndBtn" onclick="jumpToEndOfChat()" style="display: none;">
+                    <i data-lucide="chevrons-down" style="width: 16px; height: 16px;"></i>
+                    Jump to end
+                </button>
 
                 <!-- Input Container -->
                 <div class="input-container glass-input">
@@ -116,6 +128,7 @@
                     <div class="tab-navigation">
                     <button class="tab-btn active" data-tab="story-wiki">Story Wiki</button>
                     <button class="tab-btn" data-tab="state">State</button>
+                    <button class="tab-btn" data-tab="lore-keeper">Lore Keeper</button>
                 </div>
 
                 <!-- Story Wiki Tab -->
@@ -195,8 +208,77 @@
                     </div>
                 </div>
 
+                <!-- Lore Keeper Tab -->
+                <div class="tab-content" id="lore-keeper">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <i data-lucide="sparkles" style="width: 18px; height: 18px;"></i>
+                            Lore Keeper
+                        </div>
+                        <div class="card-body">
+                            <!-- Controls -->
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <!-- On/Off Toggle -->
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <span style="font-weight: 500;">Auto-Extract Lore</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="loreKeeperEnabled">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+
+                                <!-- Require Confirmation Toggle -->
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <span style="font-size: 0.9em; color: var(--secondary-text);">Require Confirmation</span>
+                                    <label class="toggle-switch small">
+                                        <input type="checkbox" id="loreKeeperConfirm" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+
+                                <!-- Scan Now Button -->
+                                <button class="scan-btn" id="scanConversationBtn" onclick="scanConversationForLore()">
+                                    <i data-lucide="scan-search" style="width: 14px; height: 14px;"></i>
+                                    Scan Conversation Now
+                                </button>
+
+                                <div style="font-size: 0.85em; color: var(--secondary-text); margin-top: 4px;">
+                                    Extract characters, locations, items, and events from the current session.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Extracted Lore Preview (shows when lore is extracted) -->
+                    <div class="content-card" id="extractedLorePanel" style="display: none; margin-top: 16px;">
+                        <div class="card-header">
+                            <i data-lucide="list-checks" style="width: 18px; height: 18px;"></i>
+                            <span>Extracted Lore</span>
+                            <button class="close-detail-btn" onclick="clearExtractedLore()" title="Clear">
+                                <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+                            </button>
+                        </div>
+                        <div class="card-body" id="extractedLoreContent">
+                            <!-- Extracted lore items will appear here -->
+                        </div>
+                        <div class="card-footer" style="padding: 12px 16px; border-top: 1px solid var(--panel-border); display: flex; gap: 8px; justify-content: flex-end;">
+                            <button class="btn-secondary" onclick="clearExtractedLore()">Cancel</button>
+                            <button class="btn-primary" onclick="saveSelectedLore()">
+                                <i data-lucide="save" style="width: 14px; height: 14px;"></i>
+                                Save Selected
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 </div>
             </div>
+        </div>
+
+        <!-- Director Panel Restore Tab (shown when director panel is collapsed) -->
+        <div class="panel-restore-tab right" id="directorRestoreTab" style="display: none;">
+            <i data-lucide="layout-dashboard" style="width: 16px; height: 16px;"></i>
+            <span>Director</span>
         </div>
     </div>
 
@@ -259,44 +341,6 @@
                                 <input type="radio" name="layout" value="chat-only">
                                 <span>Chat Only (Fullscreen)</span>
                             </label>
-                            <label class="radio-item">
-                                <input type="radio" name="layout" value="triple">
-                                <span>Triple Panel (+ Settings Sidebar)</span>
-                            </label>
-                        </div>
-                        <div class="checkbox-desc">🔒 Coming in Phase 2</div>
-                    </div>
-
-                    <!-- Auto Wiki Updates (mockup) -->
-                    <div class="checkbox-item disabled">
-                        <div class="checkbox disabled">
-                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--disabled-text);"></i>
-                        </div>
-                        <div class="checkbox-label">
-                            <div class="checkbox-title">Automatic Wiki Updates</div>
-                            <div class="checkbox-desc">🔒 Coming in Phase 2 - AI automatically extracts and saves information to wiki pages after each response</div>
-                        </div>
-                    </div>
-
-                    <!-- Auto-scroll (mockup) -->
-                    <div class="checkbox-item disabled">
-                        <div class="checkbox disabled">
-                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--disabled-text);"></i>
-                        </div>
-                        <div class="checkbox-label">
-                            <div class="checkbox-title">Auto-scroll to new messages</div>
-                            <div class="checkbox-desc">🔒 Coming in Phase 2 - Automatically scroll chat when new AI responses arrive</div>
-                        </div>
-                    </div>
-
-                    <!-- Sound Effects (mockup) -->
-                    <div class="checkbox-item disabled">
-                        <div class="checkbox disabled">
-                            <i data-lucide="lock" style="width: 12px; height: 12px; color: var(--disabled-text);"></i>
-                        </div>
-                        <div class="checkbox-label">
-                            <div class="checkbox-title">Sound Effects</div>
-                            <div class="checkbox-desc">🔒 Coming in Phase 2 - Play sounds for message send/receive</div>
                         </div>
                     </div>
 
@@ -847,6 +891,7 @@
     <script src="/static/js/settings.js"></script>
     <script src="/static/js/controls.js"></script>
     <script src="/static/js/wiki.js"></script>
+    <script src="/static/js/lorekeeper.js"></script>
     <script src="/static/js/chat.js"></script>
     <script src="/static/js/app.js"></script>
 
